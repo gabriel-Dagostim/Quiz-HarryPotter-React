@@ -1,0 +1,111 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Raleway", sans-serif;
+  color: #fff;
+}
+
+
+/* Estilizando a barra de rolagem no Chrome, Safari e Edge */
+::-webkit-scrollbar {
+  width: 12px; /* Largura da barra de rolagem */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Cor da parte deslizante da barra de rolagem */
+}
+
+::-webkit-scrollbar-track {
+  background-color: #eee; /* Cor da parte fixa da barra de rolagem */
+}
+
+/* Cobertura para a barra de rolagem */
+::-webkit-scrollbar::before {
+  content: ''; /* Criando um pseudoelemento para cobrir a barra de rolagem */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: #fff; /* Cor de fundo que cobre a barra de rolagem */
+  z-index: 1; /* Certifica-se de que a cobertura está acima da barra de rolagem */
+}
+
+/* Estilizando a barra de rolagem no Firefox */
+.scroll-content {
+  scrollbar-width: thin; /* Para navegadores Firefox */
+}
+
+.scroll-content::-moz-scrollbar-thumb {
+  background-color: transparent;
+}
+
+.scroll-content::-moz-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Cobertura para a barra de rolagem no Firefox */
+.scroll-content::-moz-scrollbar::before {
+  content: ''; /* Criando um pseudoelemento para cobrir a barra de rolagem */
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: transparent; /* Cor de fundo que cobre a barra de rolagem */
+  z-index: 1; /* Certifica-se de que a cobertura está acima da barra de rolagem */
+}
+
+
+
+body,
+html {
+  min-height: 100vh;
+  height: 100%;
+  background-image: url(./img/WallPaper/phoenix-hogwarts-castle-school-fantastic-beasts-3-4k-wallpaper-uhdpaper.com-767@0@f.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+
+@media (width < 800px) {
+  body, html {
+    background-color: #0c0b19;
+    background-image: none;
+  }
+}
+  
+.com-icon{
+  position: absolute;
+  left: 88vw;
+  top: 80%;
+  height: 10vw;
+}
+
+
+
+button {
+  font-weight: bold;
+  
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.8rem 1.5rem;
+  background: linear-gradient(
+    90deg,
+    rgb(241, 237, 2) -10%,
+    rgb(255, 0, 2) 100%
+  );
+  border-radius: 3rem;
+  border: none;
+}
+
+button:hover {
+  background: linear-gradient(
+    90deg,
+    rgb(241, 237, 2) 0%,
+    rgb(255, 0, 0) 100%
+  );
+}
+
+

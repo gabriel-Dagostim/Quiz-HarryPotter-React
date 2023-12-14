@@ -1,0 +1,21 @@
+.App {
+  text-align: center;
+  padding-top: 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+.App h1 {
+  margin-bottom: 2rem;
+}
+
+.App h2{
+  background-image: url(./img/OR7WAL0.jpg);
+  padding: 5%;
+  border-radius: 5rem;
+  border: 15px solid gold;
+  text-transform: uppercase;
+}
