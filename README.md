@@ -87,3 +87,13 @@ npm run dev
 ```
 
 Acesse `http://localhost:3000` no navegador.
+
+---
+
+## Engenharia Assistida por IA: Antes, Falhas e Correções
+
+- **Antes (Baseline 2023–2024):** Protótipo inicial em React + Vite baseado em `quizReducer` (`src/context/quiz.jsx`), com poucas perguntas genéricas, logs de depuração (`console.log`), ajuda limitada a ocultar uma opção fixa e sem cenas 3D ou síntese de áudio.
+- **Falhas identificadas e correções aplicadas:**
+  1. **Mutação de estado e embaralhamento enviesado:** o fluxo antigo aplicava `sort(() => Math.random() - 0.5)` diretamente no array do estado e mantinha referências compartilhadas ao reiniciar. Na reestruturação (`QuizArena.jsx`, `HousesHall.jsx`), foi adotado embaralhamento Fisher–Yates imutável (`shuffleArray`) para perguntas e alternativas, com isolamento de estado por modo.
+  2. **Ciclo de vida WebGL na troca de temas 3D (`MagicCanvas.jsx`):** ao alternar entre o Salão Principal e os 4 mundos das Casas, listeners e instâncias WebGL poderiam acumular em memória. Corrigido com cancelamento de `requestAnimationFrame`, remoção de listeners (`mousemove`, `touchmove`, `resize`), `renderer.dispose()` no cleanup do `useEffect` e teto de `devicePixelRatio` em `2`.
+  3. **Resiliência de persistência e seleção equilibrada:** leituras e gravações no `localStorage` em `App.jsx` foram protegidas com `try/catch` e reset consistente ao refazer o Chapéu Seletor, enquanto `SortingCeremony.jsx` pondera 15 provações entre 4 Casas e 8 Virtudes sem eliminações precoces.
