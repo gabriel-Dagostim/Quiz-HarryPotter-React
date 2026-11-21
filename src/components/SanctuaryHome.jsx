@@ -1,186 +1,131 @@
-import { Sparkles, BookOpen, Shield, Wand2, Lock, Unlock } from "lucide-react";
-import { HOUSES, HOUSE_ORDER, NEUTRAL_THEME } from "../data/houses";
-import TiltCard from "./TiltCard";
-import { GoldenSnitch3D, HouseCrest, GuardianAnimalShowcase } from "./HouseCrest";
+import { Wand2, Shield, BookOpen, HelpCircle, ArrowRight, Sparkles } from "lucide-react";
+import { HOUSES, NEUTRAL_THEME } from "../data/houses";
+import { HouseCrest } from "./HouseCrest";
+import { WizFrame, HallowsDivider } from "./WizFrame";
 import { magicAudio } from "../utils/sound";
+
+const PORTALS = [
+  {
+    id: "sorting",
+    title: "Chapéu Seletor",
+    tag: "Cerimônia Oficial",
+    desc: "Descubra sua Casa com voz e seleção ramificada.",
+    icon: Wand2,
+    cta: "Iniciar Seleção",
+  },
+  {
+    id: "houses",
+    title: "Provas das Casas",
+    tag: "N.O.M.s & N.I.E.M.s",
+    desc: "Vença os exames oficiais e libere todas as Salas Comunais.",
+    icon: Shield,
+    cta: "Fazer Exames",
+  },
+  {
+    id: "quiz",
+    title: "Quiz Bruxo",
+    tag: "Filmes & Livros",
+    desc: "80 perguntas em 4 níveis com Dica da Hermione e Reducto.",
+    icon: BookOpen,
+    cta: "Abrir Quiz",
+  },
+  {
+    id: "perfil",
+    title: "Perfil Bruxo",
+    tag: "Novo • 56 Cartas",
+    desc: "Adivinhe personagens, criaturas e relíquias em 10 dicas.",
+    icon: HelpCircle,
+    cta: "Jogar Perfil",
+    featured: true,
+  },
+];
 
 export default function SanctuaryHome({
   sortedHouse,
-  unlockedHouses = [],
-  activeTheme = "neutral",
+  unlockedHouses,
+  activeTheme,
   onNavigate,
-  onSelectTheme,
 }) {
-  const isNeutral = activeTheme === "neutral" || !HOUSES[activeTheme];
-  const currentThemeObj = isNeutral ? NEUTRAL_THEME : HOUSES[activeTheme];
+  const isHouse = activeTheme !== "neutral" && HOUSES[activeTheme];
+  const current = isHouse ? HOUSES[activeTheme] : NEUTRAL_THEME;
+  const sortedObj = sortedHouse ? HOUSES[sortedHouse] : null;
 
-  const go = (view) => {
+  const go = (target) => {
     magicAudio.sparkle();
-    onNavigate(view);
+    onNavigate(target);
   };
 
   return (
-    <div className="sanctuary-home fade-in">
-      <section className="hero-banner grimoire-stage">
-        <div className="grimoire-corner tl" />
-        <div className="grimoire-corner tr" />
-        <div className="grimoire-corner bl" />
-        <div className="grimoire-corner br" />
-
-        <div className="hero-visual-top">
-          <GoldenSnitch3D size={62} />
-          <GuardianAnimalShowcase themeId={activeTheme} />
+    <section className="home-view">
+      {/* Majestic Compact Hero */}
+      <WizFrame className="home-hero">
+        <div className="home-hero-crest">
+          <div className="crest-halo" />
+          <HouseCrest houseId={activeTheme} size={118} />
         </div>
 
-        <span className="eyebrow-pill">
-          <Sparkles size={14} />{" "}
-          {isNeutral
-            ? "Modo Neutro • Salão Principal de Banquetes"
-            : `Santuário de ${currentThemeObj.name} • ${currentThemeObj.animalName}`}
+        <span className="wiz-eyebrow">
+          <Sparkles size={13} /> {current.commonRoom}
         </span>
 
-        <h1 className="hero-title">
-          {isNeutral ? (
-            <>
-              Bem-Vindo ao <span className="gold-shimmer">Salão Principal</span>
-            </>
-          ) : (
-            <>
-              Domínio da <span className="gold-shimmer">{currentThemeObj.name}</span>
-            </>
-          )}
+        <h1 className="home-title">
+          {isHouse ? `Casa ${current.name}` : "Escola de Magia de Hogwarts"}
         </h1>
 
-        <p className="hero-subtitle">{currentThemeObj.environmentDesc}</p>
+        <p className="home-motto">“{current.motto}”</p>
 
-        {/* Theme Unlock Progress Strip */}
-        <div className="unlock-strip">
-          <div className="unlock-strip-title">
-            {sortedHouse ? (
-              <span>
-                Casas Desbloqueadas no Topo: <strong>{unlockedHouses.length} de 4</strong>
-              </span>
-            ) : (
-              <span>
-                🔒 Faça o <strong>Chapéu Seletor</strong> para descobrir sua Casa e liberar os temas!
-              </span>
-            )}
-          </div>
-
-          <div className="unlock-mini-crests">
-            {HOUSE_ORDER.map((id) => {
-              const unlocked = unlockedHouses.includes(id);
-              const active = activeTheme === id;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  className={`mini-crest-btn ${active ? "is-active" : ""} ${
-                    !unlocked ? "is-locked" : ""
-                  }`}
-                  onClick={() => {
-                    if (unlocked) {
-                      magicAudio.themeSwitch(id);
-                      onSelectTheme(id);
-                    } else {
-                      go(sortedHouse ? "houses" : "sorting");
-                    }
-                  }}
-                >
-                  <HouseCrest houseId={id} size={38} locked={!unlocked} />
-                  <span>{HOUSES[id].name}</span>
-                </button>
-              );
-            })}
-          </div>
+        <div className="home-cta-row">
+          <button type="button" className="btn-gold" onClick={() => go("sorting")}>
+            <Wand2 size={17} />
+            {sortedObj ? `Sua Casa: ${sortedObj.name}` : "Vestir o Chapéu Seletor"}
+          </button>
+          <button type="button" className="btn-outline" onClick={() => go("perfil")}>
+            <HelpCircle size={17} />
+            Jogar Perfil HP
+          </button>
         </div>
-      </section>
 
-      <section className="portal-grid">
-        <TiltCard
-          className="portal-card grimoire-card"
-          glowColor="rgba(229, 193, 88, 0.45)"
-          onClick={() => go("sorting")}
-        >
-          <div className="grimoire-corner tl" />
-          <div className="grimoire-corner tr" />
-          <div className="grimoire-corner bl" />
-          <div className="grimoire-corner br" />
+        <div className="home-status-strip">
+          <span>
+            Salas liberadas: <strong>{unlockedHouses.length}/4</strong>
+          </span>
+          <span className="strip-dot">•</span>
+          <span>
+            Tema ativo: <strong>{current.name}</strong>
+          </span>
+        </div>
+      </WizFrame>
 
-          <div className="portal-top-row">
-            <div className="portal-icon-badge gold">
-              <Wand2 size={26} />
-            </div>
-            <span className="portal-tag">15 Provas + Voz do Chapéu</span>
-          </div>
-          <h2>Cerimônia do Chapéu Seletor</h2>
-          <p>
-            Encare relíquias, poções, feitiços e a balança dos Fundadores. O Chapéu anunciará sua
-            Casa em voz alta e transformará o site automaticamente!
-          </p>
-          <div className="relic-card-footer">
-            <span>{sortedHouse ? "Refazer Cerimônia" : "Iniciar Seleção"}</span>
-            <span>⟶</span>
-          </div>
-        </TiltCard>
+      <HallowsDivider label="Atividades de Hogwarts" />
 
-        <TiltCard
-          className="portal-card grimoire-card"
-          glowColor="rgba(46, 230, 138, 0.4)"
-          onClick={() => go("houses")}
-        >
-          <div className="grimoire-corner tl" />
-          <div className="grimoire-corner tr" />
-          <div className="grimoire-corner bl" />
-          <div className="grimoire-corner br" />
-
-          <div className="portal-top-row">
-            <div className="portal-icon-badge emerald">
-              <Shield size={26} />
-            </div>
-            <span className="portal-tag">
-              {unlockedHouses.length}/4 Casas Liberadas
-            </span>
-          </div>
-          <h2>Provas das Casas &amp; Guardiões</h2>
-          <p>
-            Quer liberar os temas 3D e os animais das outras Casas no topo do site? Vença o quiz
-            dedicado de cada Casa atingindo a pontuação mínima!
-          </p>
-          <div className="relic-card-footer">
-            <span>Desafiar Guardiões</span>
-            <span>⟶</span>
-          </div>
-        </TiltCard>
-
-        <TiltCard
-          className="portal-card grimoire-card"
-          glowColor="rgba(115, 179, 255, 0.45)"
-          onClick={() => go("quiz")}
-        >
-          <div className="grimoire-corner tl" />
-          <div className="grimoire-corner tr" />
-          <div className="grimoire-corner bl" />
-          <div className="grimoire-corner br" />
-
-          <div className="portal-top-row">
-            <div className="portal-icon-badge blue">
-              <BookOpen size={26} />
-            </div>
-            <span className="portal-tag">Filmes vs. Livros • 4 Níveis</span>
-          </div>
-          <h2>Desafio dos Saberes Bruxos</h2>
-          <p>
-            Escolha entre os <strong>8 Filmes</strong> ou os <strong>7 Livros</strong> nos graus{" "}
-            <em>Trouxa</em>, <em>Aborto</em>, <em>Bruxo Formado</em> e{" "}
-            <em>Mestre das Relíquias</em>. Cuidado com a pegadinha se reprovar!
-          </p>
-          <div className="relic-card-footer">
-            <span>Abrir Pergaminhos</span>
-            <span>⟶</span>
-          </div>
-        </TiltCard>
-      </section>
-    </div>
+      {/* 4 Clean Visual Portals */}
+      <div className="portal-grid">
+        {PORTALS.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className={`portal-card ${item.featured ? "is-featured" : ""}`}
+              onClick={() => go(item.id)}
+            >
+              <span className="wf-corner wf-tl" aria-hidden="true" />
+              <span className="wf-corner wf-br" aria-hidden="true" />
+              <div className="portal-top">
+                <span className="portal-icon">
+                  <Icon size={20} />
+                </span>
+                <span className="portal-tag">{item.tag}</span>
+              </div>
+              <h3>{item.title}</h3>
+              <p>{item.desc}</p>
+              <span className="portal-link">
+                {item.cta} <ArrowRight size={15} />
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 }

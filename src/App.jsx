@@ -1,16 +1,34 @@
 import { useEffect, useState } from "react";
-import { Volume2, VolumeX, Castle, Wand2, Shield, BookOpen, Lock } from "lucide-react";
+import {
+  Volume2,
+  VolumeX,
+  Castle,
+  Wand2,
+  Shield,
+  BookOpen,
+  HelpCircle,
+  Lock,
+} from "lucide-react";
 import { HOUSES, HOUSE_ORDER, NEUTRAL_THEME } from "./data/houses";
 import { magicAudio } from "./utils/sound";
-import MagicCanvas from "./components/MagicCanvas";
+import HogwartsBackdrop from "./components/HogwartsBackdrop";
 import { HouseCrest } from "./components/HouseCrest";
 import SanctuaryHome from "./components/SanctuaryHome";
 import SortingCeremony from "./components/SortingCeremony";
-import QuizArena from "./components/QuizArena";
 import HousesHall from "./components/HousesHall";
+import QuizArena from "./components/QuizArena";
+import PerfilGame from "./components/PerfilGame";
+
+const NAV_ITEMS = [
+  { id: "home", label: "Salão", mobileLabel: "Salão", icon: Castle },
+  { id: "sorting", label: "Chapéu Seletor", mobileLabel: "Chapéu", icon: Wand2 },
+  { id: "houses", label: "Provas das Casas", mobileLabel: "Provas", icon: Shield },
+  { id: "quiz", label: "Quiz Bruxo", mobileLabel: "Quiz", icon: BookOpen },
+  { id: "perfil", label: "Perfil HP", mobileLabel: "Perfil", icon: HelpCircle },
+];
 
 export default function App() {
-  const [view, setView] = useState("home"); // home | sorting | houses | quiz
+  const [view, setView] = useState("home"); // home | sorting | houses | quiz | perfil
   const [soundOn, setSoundOn] = useState(true);
   const [lockNotice, setLockNotice] = useState(null);
 
@@ -54,8 +72,6 @@ export default function App() {
     }
   };
 
-  // Called when the Sorting Hat finishes and selects a House!
-  // Automatically unlocks that House and applies its 3D theme!
   const handleCompleteSorting = (houseId) => {
     const nextUnlocked = [houseId];
     setSortedHouse(houseId);
@@ -65,7 +81,6 @@ export default function App() {
     magicAudio.themeSwitch(houseId);
   };
 
-  // Called when the player passes a House Guardian Quiz (>= 6/8)
   const handleUnlockHouse = (houseId) => {
     setUnlockedHouses((prev) => {
       const next = prev.includes(houseId) ? prev : [...prev, houseId];
@@ -74,8 +89,6 @@ export default function App() {
     });
   };
 
-  // Called when the player chooses to re-take the Sorting Hat test:
-  // Wipes previously unlocked houses and resets to Neutral Great Hall!
   const handleResetSorting = () => {
     setSortedHouse(null);
     setUnlockedHouses([]);
@@ -103,14 +116,14 @@ export default function App() {
       const targetName = HOUSES[themeId]?.name || "";
       if (!sortedHouse) {
         setLockNotice({
-          text: `O brasão de ${targetName} está selado! Passe primeiro pelo Chapéu Seletor para descobrir sua Casa.`,
-          actionLabel: "Ir ao Chapéu Seletor",
+          text: `${targetName} selada — descubra sua Casa no Chapéu Seletor primeiro.`,
+          actionLabel: "Chapéu Seletor",
           targetView: "sorting",
         });
       } else {
         setLockNotice({
-          text: `Tema de ${targetName} bloqueado! Vença o Desafio do Guardião na aba Casas para liberar este brasão.`,
-          actionLabel: `Desafiar ${targetName}`,
+          text: `${targetName} bloqueada — vença o exame da Casa para liberar esta Sala.`,
+          actionLabel: `Fazer Prova`,
           targetView: "houses",
         });
       }
@@ -122,7 +135,7 @@ export default function App() {
 
   return (
     <div
-      className={`sanctuary-app theme-${activeTheme}`}
+      className={`hogwarts-app theme-${activeTheme}`}
       style={{
         "--theme-primary": currentThemeObj.colors.primary,
         "--theme-secondary": currentThemeObj.colors.secondary,
@@ -130,137 +143,132 @@ export default function App() {
         "--theme-surface": currentThemeObj.colors.surface,
         "--theme-surface-alt": currentThemeObj.colors.surfaceAlt,
         "--theme-glow": currentThemeObj.colors.glow,
-        "--theme-bg": currentThemeObj.colors.bgGradient,
         "--theme-ornament": currentThemeObj.colors.borderOrnament,
       }}
     >
-      {/* Real Three.js 3D World Background */}
-      <MagicCanvas themeId={activeTheme} />
-      <div className="ambient-vignette" aria-hidden="true" />
+      {/* Real Hogwarts Photography Backdrop with Theme Color Grading */}
+      <HogwartsBackdrop themeId={activeTheme} />
 
-      {/* Sticky Header with the 5 Interactive Crests (Great Hall + 4 Houses) */}
+      {/* Top Navigation & Official Crests Bar */}
       <header className="top-navbar">
-        <div className="header-top-row">
-          <button
-            type="button"
-            className="brand-btn"
-            onClick={() => {
-              magicAudio.sparkle();
-              setView("home");
-            }}
-          >
-            <span className="brand-crest-dot" />
-            <div className="brand-titles">
-              <strong>Refúgio de Hogwarts</strong>
-              <small>{currentThemeObj.name}</small>
-            </div>
-          </button>
-
-          {/* Desktop Navigation */}
-          <nav className="desktop-nav" aria-label="Menu Principal">
-            <button className={view === "home" ? "active" : ""} onClick={() => setView("home")}>
-              Salão
-            </button>
-            <button
-              className={view === "sorting" ? "active" : ""}
-              onClick={() => setView("sorting")}
-            >
-              Chapéu Seletor
-            </button>
-            <button className={view === "houses" ? "active" : ""} onClick={() => setView("houses")}>
-              Provas das Casas
-            </button>
-            <button className={view === "quiz" ? "active" : ""} onClick={() => setView("quiz")}>
-              Quiz Bruxo
-            </button>
-          </nav>
-
-          <button
-            type="button"
-            className="sound-toggle"
-            onClick={() => setSoundOn((s) => !s)}
-            aria-label={soundOn ? "Desativar som mágico" : "Ativar som mágico"}
-            title={soundOn ? "Som e Voz do Chapéu: Ativados" : "Som Mudo"}
-          >
-            {soundOn ? <Volume2 size={18} /> : <VolumeX size={18} />}
-          </button>
-        </div>
-
-        {/* Crest Theme Selector Bar in Header */}
-        <div className="header-crest-bar" role="toolbar" aria-label="Seletor de Tema e Casa">
-          <button
-            type="button"
-            className={`header-crest-btn ${activeTheme === "neutral" ? "is-selected" : ""}`}
-            onClick={() => handleSelectCrestHeader("neutral")}
-            title="Modo Neutro: Salão Principal de Banquetes"
-          >
-            <HouseCrest houseId="neutral" size={34} />
-            <span className="crest-btn-label">Salão</span>
-          </button>
-
-          <div className="crest-bar-divider" />
-
-          {HOUSE_ORDER.map((id) => {
-            const isUnlocked = unlockedHouses.includes(id);
-            const isSelected = activeTheme === id;
-            const h = HOUSES[id];
-            return (
-              <button
-                key={id}
-                type="button"
-                className={`header-crest-btn ${isSelected ? "is-selected" : ""} ${
-                  !isUnlocked ? "is-locked" : ""
-                }`}
-                onClick={() => handleSelectCrestHeader(id)}
-                title={
-                  isUnlocked
-                    ? `Ativar Tema 3D de ${h.name}`
-                    : `${h.name} (Bloqueado — libere pelo Chapéu ou Quiz das Casas)`
-                }
-              >
-                <HouseCrest houseId={id} size={34} locked={!isUnlocked} />
-                <span className="crest-btn-label">{h.name}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Locked Crest Toast Notice */}
-        {lockNotice && (
-          <div className="header-lock-toast">
-            <Lock size={15} />
-            <span>{lockNotice.text}</span>
+        <div className="header-inner">
+          <div className="header-top-row">
             <button
               type="button"
-              className="toast-action-btn"
+              className="brand-btn"
               onClick={() => {
-                setView(lockNotice.targetView);
-                setLockNotice(null);
+                magicAudio.sparkle();
+                setView("home");
               }}
             >
-              {lockNotice.actionLabel} →
+              <HouseCrest houseId={activeTheme} size={36} />
+              <div className="brand-titles">
+                <strong>Hogwarts</strong>
+                <small>{currentThemeObj.name}</small>
+              </div>
             </button>
+
+            <nav className="desktop-nav" aria-label="Menu Principal">
+              {NAV_ITEMS.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={view === item.id ? "is-active" : ""}
+                  onClick={() => {
+                    magicAudio.sparkle();
+                    setView(item.id);
+                    setLockNotice(null);
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </nav>
+
             <button
               type="button"
-              className="toast-close-btn"
-              onClick={() => setLockNotice(null)}
-              aria-label="Fechar aviso"
+              className="sound-toggle"
+              onClick={() => setSoundOn((s) => !s)}
+              aria-label={soundOn ? "Silenciar som" : "Ativar som"}
+              title={soundOn ? "Som e Voz ativados" : "Som silenciado"}
             >
-              ✕
+              {soundOn ? <Volume2 size={17} /> : <VolumeX size={17} />}
             </button>
           </div>
-        )}
+
+          {/* 5 Official Crests Theme Bar */}
+          <div className="header-crest-bar" role="toolbar" aria-label="Salas e Temas de Hogwarts">
+            <button
+              type="button"
+              className={`header-crest-btn ${activeTheme === "neutral" ? "is-selected" : ""}`}
+              onClick={() => handleSelectCrestHeader("neutral")}
+              title="Salão Principal de Hogwarts"
+            >
+              <HouseCrest houseId="neutral" size={30} />
+              <span>Salão</span>
+            </button>
+
+            <span className="crest-bar-sep" aria-hidden="true" />
+
+            {HOUSE_ORDER.map((id) => {
+              const isUnlocked = unlockedHouses.includes(id);
+              const isSelected = activeTheme === id;
+              const h = HOUSES[id];
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  className={`header-crest-btn ${isSelected ? "is-selected" : ""} ${
+                    !isUnlocked ? "is-locked" : ""
+                  }`}
+                  onClick={() => handleSelectCrestHeader(id)}
+                  title={isUnlocked ? `Sala Comunal da ${h.name}` : `${h.name} (Bloqueada)`}
+                >
+                  <HouseCrest houseId={id} size={30} locked={!isUnlocked} />
+                  <span>{h.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {lockNotice && (
+            <div className="header-lock-toast">
+              <Lock size={14} />
+              <span>{lockNotice.text}</span>
+              <button
+                type="button"
+                className="toast-action-btn"
+                onClick={() => {
+                  setView(lockNotice.targetView);
+                  setLockNotice(null);
+                }}
+              >
+                {lockNotice.actionLabel} →
+              </button>
+              <button
+                type="button"
+                className="toast-close-btn"
+                onClick={() => setLockNotice(null)}
+                aria-label="Fechar aviso"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <main className="sanctuary-main">
         {view === "home" && (
           <SanctuaryHome
             sortedHouse={sortedHouse}
             unlockedHouses={unlockedHouses}
             activeTheme={activeTheme}
-            onNavigate={setView}
-            onSelectTheme={(id) => handleSelectCrestHeader(id)}
+            onNavigate={(next) => {
+              setView(next);
+              setLockNotice(null);
+            }}
           />
         )}
         {view === "sorting" && (
@@ -278,33 +286,35 @@ export default function App() {
             sortedHouse={sortedHouse}
             unlockedHouses={unlockedHouses}
             activeTheme={activeTheme}
-            onSelectTheme={(id) => handleSelectCrestHeader(id)}
+            onSelectTheme={handleSelectCrestHeader}
             onUnlockHouse={handleUnlockHouse}
-            onResetSorting={handleResetSorting}
             onStartSorting={() => setView("sorting")}
           />
         )}
-        {view === "quiz" && <QuizArena onBack={() => setView("home")} />}
+        {view === "quiz" && <QuizArena />}
+        {view === "perfil" && <PerfilGame />}
       </main>
 
-      {/* Mobile-First Bottom Magical Dock Navigation */}
+      {/* Mobile Bottom Dock (5 Tabs) */}
       <nav className="mobile-bottom-dock" aria-label="Navegação Mobile">
-        <button className={view === "home" ? "active" : ""} onClick={() => setView("home")}>
-          <Castle size={20} />
-          <span>Salão</span>
-        </button>
-        <button className={view === "sorting" ? "active" : ""} onClick={() => setView("sorting")}>
-          <Wand2 size={20} />
-          <span>Chapéu</span>
-        </button>
-        <button className={view === "houses" ? "active" : ""} onClick={() => setView("houses")}>
-          <Shield size={20} />
-          <span>Casas ({unlockedHouses.length}/4)</span>
-        </button>
-        <button className={view === "quiz" ? "active" : ""} onClick={() => setView("quiz")}>
-          <BookOpen size={20} />
-          <span>Quiz HP</span>
-        </button>
+        {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              className={view === item.id ? "is-active" : ""}
+              onClick={() => {
+                magicAudio.sparkle();
+                setView(item.id);
+                setLockNotice(null);
+              }}
+            >
+              <Icon size={19} />
+              <span>{item.mobileLabel}</span>
+            </button>
+          );
+        })}
       </nav>
     </div>
   );

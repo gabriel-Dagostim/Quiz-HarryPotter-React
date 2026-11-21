@@ -4,3 +4,4 @@ dist-ssr
 .vercel
 *.local
 .DS_Store
+.env*

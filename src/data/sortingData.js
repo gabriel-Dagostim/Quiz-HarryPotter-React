@@ -810,49 +810,53 @@ export const SORTING_QUESTIONS = [
   },
 ];
 
-export const TOTAL_SORTING_STEPS = 15;
+export const TOTAL_SORTING_STEPS = 10;
+
+function pickRandom(list) {
+  if (!list.length) return null;
+  return list[Math.floor(Math.random() * list.length)];
+}
 
 /**
- * Selects the next question dynamically based on current scores & answered IDs,
- * creating a 15-step adaptive branching flow without ever prematurely eliminating a house.
+ * Selects the next question dynamically & randomly from matching phases based on scores,
+ * so no two Sorting Ceremonies ever follow the exact same question order.
  */
 export function pickNextSortingQuestion(answeredIds, scores, stepIndex) {
   const remaining = SORTING_QUESTIONS.filter((q) => !answeredIds.includes(q.id));
   if (remaining.length === 0) return null;
 
-  // Step 0..4: Core questions first
-  if (stepIndex < 5) {
+  // Steps 0..2: Random core questions
+  if (stepIndex < 3) {
     const core = remaining.filter((q) => q.phase === "core");
-    if (core.length > 0) return core[0];
+    if (core.length > 0) return pickRandom(core);
   }
 
-  // Step 12..14: Final Mirror / Hatstall questions
-  if (stepIndex >= 12) {
+  // Last 2 steps (8..9): Random final Mirror / Hatstall questions
+  if (stepIndex >= TOTAL_SORTING_STEPS - 2) {
     const finals = remaining.filter((q) => q.phase === "final");
-    if (finals.length > 0) return finals[0];
+    if (finals.length > 0) return pickRandom(finals);
   }
 
-  // Middle steps (5..11): Check top 2 houses to pick a relevant tie-breaker branch!
+  // Middle steps: Prefer a random branch matching the top 2 houses
   const sortedHouses = Object.entries(scores)
     .sort((a, b) => b[1] - a[1])
     .map(([house]) => house);
 
   const topTwo = [sortedHouses[0], sortedHouses[1]];
-  const branchMatch = remaining.find(
+  const branchMatches = remaining.filter(
     (q) =>
       q.phase === "branch" &&
       q.pairMatch &&
       q.pairMatch.includes(topTwo[0]) &&
       q.pairMatch.includes(topTwo[1])
   );
-  if (branchMatch) return branchMatch;
+  if (branchMatches.length > 0) return pickRandom(branchMatches);
 
-  // Otherwise pick from general pool, then any remaining branch, then final
-  const general = remaining.filter((q) => q.phase === "general");
-  if (general.length > 0) return general[0];
+  const general = remaining.filter((q) => q.phase === "general" || q.phase === "core");
+  if (general.length > 0) return pickRandom(general);
 
   const anyBranch = remaining.filter((q) => q.phase === "branch");
-  if (anyBranch.length > 0) return anyBranch[0];
+  if (anyBranch.length > 0) return pickRandom(anyBranch);
 
-  return remaining[0];
+  return pickRandom(remaining);
 }
