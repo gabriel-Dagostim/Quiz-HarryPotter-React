@@ -2203,6 +2203,247 @@ button {
 }
 
 /* =========================================================
+   NARRATOR BAR & VOICE CONTROLS (OMNIVOICE CHARACTERS)
+   ========================================================= */
+.narrator-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(10, 7, 5, 0.72);
+  width: 100%;
+  transition: border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.narrator-bar.is-speaking {
+  border-color: var(--theme-ornament);
+  box-shadow: 0 0 22px -6px var(--theme-glow);
+}
+
+.narrator-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid rgba(212, 175, 55, 0.6);
+  background: #140f0a;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.narrator-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.narrator-avatar.is-prop img {
+  object-fit: contain;
+  padding: 4px;
+}
+
+.narrator-bar.is-speaking .narrator-avatar {
+  box-shadow: 0 0 14px var(--theme-glow);
+}
+
+.narrator-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.narrator-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.narrator-name-row strong {
+  font-family: var(--font-serif);
+  font-size: 0.84rem;
+  color: var(--theme-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.narrator-info small {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.voice-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.voice-bars i {
+  display: block;
+  width: 2.5px;
+  height: 5px;
+  border-radius: 2px;
+  background: var(--theme-secondary);
+  animation: voiceWave 0.75s ease-in-out infinite;
+}
+
+.voice-bars i:nth-child(2) {
+  animation-delay: 0.14s;
+}
+.voice-bars i:nth-child(3) {
+  animation-delay: 0.28s;
+}
+.voice-bars i:nth-child(4) {
+  animation-delay: 0.42s;
+}
+
+@keyframes voiceWave {
+  0%,
+  100% {
+    height: 4px;
+    opacity: 0.55;
+  }
+  50% {
+    height: 12px;
+    opacity: 1;
+  }
+}
+
+.btn-narrator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.42);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--theme-accent);
+  font-family: var(--font-serif);
+  font-size: 0.74rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.btn-narrator:hover {
+  background: rgba(212, 175, 55, 0.24);
+  border-color: var(--theme-ornament);
+}
+
+.btn-dumbledore-greet {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 14px 5px 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 175, 55, 0.38);
+  background: rgba(14, 10, 7, 0.78);
+  color: var(--theme-accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-dumbledore-greet img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid rgba(212, 175, 55, 0.6);
+}
+
+.btn-dumbledore-greet:hover,
+.btn-dumbledore-greet.is-speaking {
+  border-color: var(--theme-ornament);
+  background: rgba(212, 175, 55, 0.18);
+  box-shadow: 0 0 18px -4px var(--theme-glow);
+}
+
+.perfil-collection-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  background: rgba(10, 8, 6, 0.58);
+  font-size: 0.82rem;
+  color: var(--text-soft);
+}
+
+.perfil-collection-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.perfil-collection-bar strong {
+  color: var(--theme-accent);
+}
+
+.unseen-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--text-soft);
+}
+
+.unseen-toggle input {
+  accent-color: var(--theme-secondary);
+}
+
+.chip-count {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.filter-chip.is-active .chip-count {
+  background: rgba(212, 175, 55, 0.22);
+  color: var(--theme-accent);
+}
+
+.clue-text {
+  flex: 1;
+}
+
+.btn-clue-speak {
+  background: none;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: all 0.18s ease;
+}
+
+.btn-clue-speak:hover {
+  border-color: var(--theme-ornament);
+  color: var(--theme-accent);
+  background: rgba(212, 175, 55, 0.14);
+}
+
+/* =========================================================
    MOBILE BOTTOM DOCK
    ========================================================= */
 .mobile-bottom-dock {

@@ -157,6 +157,7 @@ export default function App() {
               type="button"
               className="brand-btn"
               onClick={() => {
+                magicAudio.stopVoice();
                 magicAudio.sparkle();
                 setView("home");
               }}
@@ -175,6 +176,7 @@ export default function App() {
                   type="button"
                   className={view === item.id ? "is-active" : ""}
                   onClick={() => {
+                    magicAudio.stopVoice();
                     magicAudio.sparkle();
                     setView(item.id);
                     setLockNotice(null);

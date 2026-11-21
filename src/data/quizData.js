@@ -1,3 +1,5 @@
+import { EXTRA_QUIZ_QUESTIONS } from "./quizExtraQuestions.js";
+
 export const QUIZ_DIVISIONS = [
   {
     id: "movies",
@@ -72,7 +74,7 @@ export const QUIZ_LEVELS = [
   },
 ];
 
-export const QUIZ_QUESTIONS = {
+export const BASE_QUIZ_QUESTIONS = {
   movies: {
     trouxa: [
       {
@@ -655,3 +657,25 @@ export const QUIZ_QUESTIONS = {
     ],
   },
 };
+
+// Combina base (80) + extras (80) = 160 perguntas com IDs estáveis para mapeamento de voz OmniVoice
+function buildQuestionBank() {
+  const out = {};
+  for (const div of ["movies", "books"]) {
+    const prefix = div === "movies" ? "qm" : "qb";
+    out[div] = {};
+    for (const lvl of ["trouxa", "aborto", "bruxo", "mestre"]) {
+      const merged = [
+        ...(BASE_QUIZ_QUESTIONS[div]?.[lvl] || []),
+        ...(EXTRA_QUIZ_QUESTIONS[div]?.[lvl] || []),
+      ];
+      out[div][lvl] = merged.map((q, idx) => ({
+        ...q,
+        id: `${prefix}_${lvl}_${String(idx + 1).padStart(2, "0")}`,
+      }));
+    }
+  }
+  return out;
+}
+
+export const QUIZ_QUESTIONS = buildQuestionBank();

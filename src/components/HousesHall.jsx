@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Lock,
   CheckCircle2,
@@ -8,12 +8,14 @@ import {
   Award,
   Sparkles,
   Wand2,
+  Volume2,
 } from "lucide-react";
 import { HOUSES, HOUSE_ORDER } from "../data/houses";
-import { HOUSE_QUIZZES, HOUSE_UNLOCK_MIN_SCORE } from "../data/houseQuizzes";
+import { HOUSE_QUIZZES, HOUSE_UNLOCK_MIN_SCORE, HOUSE_QUIZ_TOTAL } from "../data/houseQuizzes";
 import { prepareShuffledQuestions, getHogwartsGrade } from "../utils/shuffle";
 import { HouseCrest } from "./HouseCrest";
 import { WizFrame, HallowsDivider } from "./WizFrame";
+import NarratorBar from "./NarratorBar";
 import { magicAudio } from "../utils/sound";
 
 const ROMAN = ["I", "II", "III", "IV"];
@@ -32,12 +34,29 @@ export default function HousesHall({
   const [selectedOpt, setSelectedOpt] = useState(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
   const lastFirstByHouse = useRef({});
+
+  useEffect(() => {
+    return () => magicAudio.stopVoice();
+  }, []);
+
+  const playMinerva = (clipId, fallbackText) => {
+    magicAudio.playVoice(clipId, {
+      onStart: () => setSpeaking(true),
+      onEnd: () => setSpeaking(false),
+      fallbackText,
+    });
+  };
 
   const startExam = (houseId) => {
     const exam = HOUSE_QUIZZES[houseId];
     if (!exam) return;
-    const prepared = prepareShuffledQuestions(exam.questions, lastFirstByHouse.current[houseId]);
+    // Draw 8 fresh randomized questions from the 16-question house bank
+    const prepared = prepareShuffledQuestions(exam.questions, lastFirstByHouse.current[houseId]).slice(
+      0,
+      HOUSE_QUIZ_TOTAL
+    );
     if (prepared.length > 0) {
       lastFirstByHouse.current[houseId] = prepared[0].question;
     }
@@ -48,11 +67,16 @@ export default function HousesHall({
     setSelectedOpt(null);
     setScore(0);
     setFinished(false);
+    if (prepared[0]) {
+      playMinerva(`minerva_${prepared[0].id}`, prepared[0].question);
+    }
   };
 
   const handleAnswer = (opt) => {
     if (selectedOpt) return;
     const q = questions[currentIdx];
+    magicAudio.stopVoice();
+    setSpeaking(false);
     setSelectedOpt(opt);
     if (opt === q.answer) {
       magicAudio.correct();
@@ -64,20 +88,29 @@ export default function HousesHall({
 
   const handleNext = () => {
     if (currentIdx + 1 < questions.length) {
-      setCurrentIdx((i) => i + 1);
+      const nextIdx = currentIdx + 1;
+      setCurrentIdx(nextIdx);
       setSelectedOpt(null);
+      const nextQ = questions[nextIdx];
+      if (nextQ) {
+        playMinerva(`minerva_${nextQ.id}`, nextQ.question);
+      }
       return;
     }
     setFinished(true);
     if (score >= HOUSE_UNLOCK_MIN_SCORE) {
       magicAudio.reveal();
       onUnlockHouse(activeExamId);
+      playMinerva("minerva_exam_pass", "Muito bem! A Sala Comunal agora está aberta para você.");
     } else {
       magicAudio.prank();
+      playMinerva("minerva_exam_fail", "Receio que esta nota ainda não seja suficiente.");
     }
   };
 
   const closeExam = () => {
+    magicAudio.stopVoice();
+    setSpeaking(false);
     setActiveExamId(null);
     setFinished(false);
   };
@@ -124,7 +157,7 @@ export default function HousesHall({
                 </button>
               ) : (
                 <button type="button" className="btn-gold" onClick={() => startExam(activeExamId)}>
-                  <RotateCcw size={16} /> Refazer Exame
+                  <RotateCcw size={16} /> Refazer Exame (Novas Perguntas)
                 </button>
               )}
               <button type="button" className="btn-outline" onClick={closeExam}>
@@ -154,6 +187,17 @@ export default function HousesHall({
               {currentIdx + 1}/{questions.length} • {score} pts
             </div>
           </div>
+
+          <NarratorBar
+            character="minerva"
+            speaking={speaking}
+            caption={exam.subtitle}
+            onReplay={() => playMinerva(`minerva_${q.id}`, q.question)}
+            onStop={() => {
+              magicAudio.stopVoice();
+              setSpeaking(false);
+            }}
+          />
 
           <div className="wiz-progress">
             <div className="wiz-progress-fill" style={{ width: `${pct}%` }} />
@@ -216,12 +260,31 @@ export default function HousesHall({
     <section className="houses-view">
       <div className="section-head">
         <span className="wiz-eyebrow">
-          <Award size={13} /> Autoridade de Exames Bruxos
+          <Award size={13} /> Autoridade de Exames Bruxos • 64 Questões
         </span>
         <h2 className="wiz-title">Provas das Casas</h2>
         <p className="wiz-subtitle">
-          Conquiste nota Aceitável ({HOUSE_UNLOCK_MIN_SCORE}/8) nos exames de Hogwarts para liberar cada Sala Comunal.
+          Conquiste nota Aceitável ({HOUSE_UNLOCK_MIN_SCORE}/{HOUSE_QUIZ_TOTAL}) nos exames narrados pela Profa. Minerva McGonagall.
         </p>
+        <button
+          type="button"
+          className={`btn-dumbledore-greet ${speaking ? "is-speaking" : ""}`}
+          onClick={() => {
+            if (speaking) {
+              magicAudio.stopVoice();
+              setSpeaking(false);
+            } else {
+              playMinerva(
+                "minerva_houses_intro",
+                "Atenção, alunos! Estes são os exames oficiais de Hogwarts."
+              );
+            }
+          }}
+        >
+          <img src="/images/perfil/minerva-mcgonagall.webp" alt="Profa. Minerva" />
+          <Volume2 size={14} />
+          <span>{speaking ? "Profa. Minerva falando..." : "Ouvir instruções da Profa. Minerva"}</span>
+        </button>
       </div>
 
       {!sortedHouse && (
@@ -262,7 +325,7 @@ export default function HousesHall({
               </div>
 
               <div className="house-card-meta">
-                <span>Fundador: {house.founder}</span>
+                <span>Banco: {exam.questions.length} questões</span>
                 <span>Banca: {exam.examiner}</span>
               </div>
 

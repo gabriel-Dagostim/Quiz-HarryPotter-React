@@ -16,6 +16,8 @@ import {
   ChevronRight,
   RotateCcw,
   HelpCircle,
+  Volume2,
+  Trophy,
 } from "lucide-react";
 import {
   PERFIL_CARDS,
@@ -47,6 +49,7 @@ const THEME_LABELS = {
   criatura: "Criatura Mágica",
   lugar: "Lugar Mágico",
   objeto: "Objeto / Relíquia",
+  feiticopocao: "Feitiço / Poção",
 };
 
 export default function PerfilGame() {
@@ -55,6 +58,18 @@ export default function PerfilGame() {
   const [division, setDivision] = useState("all");
   const [difficulty, setDifficulty] = useState("all");
   const [theme, setTheme] = useState("all");
+  const [prioritizeUnseen, setPrioritizeUnseen] = useState(true);
+  const [speakingDumbledore, setSpeakingDumbledore] = useState(false);
+
+  // Persisted discovered cards tracker
+  const [discoveredIds, setDiscoveredIds] = useState(() => {
+    try {
+      const raw = localStorage.getItem("hp_perfil_discovered");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
 
   // Active deck & round state
   const [deck, setDeck] = useState([]);
@@ -68,6 +83,7 @@ export default function PerfilGame() {
   const [guessFeedback, setGuessFeedback] = useState(null); // null | "wrong" | "correct"
   const [soloScore, setSoloScore] = useState(0);
   const [soloSolved, setSoloSolved] = useState(0);
+  const [soloStreak, setSoloStreak] = useState(0);
 
   // Mesa / Group state
   const [teams, setTeams] = useState(DEFAULT_TEAMS);
@@ -77,6 +93,23 @@ export default function PerfilGame() {
   const [timeLeft, setTimeLeft] = useState(0);
   const [timerOn, setTimerOn] = useState(false);
 
+  useEffect(() => {
+    return () => magicAudio.stopVoice();
+  }, []);
+
+  const markDiscovered = (cardId) => {
+    setDiscoveredIds((prev) => {
+      if (prev.includes(cardId)) return prev;
+      const next = [...prev, cardId];
+      try {
+        localStorage.setItem("hp_perfil_discovered", JSON.stringify(next));
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  };
+
   const matchingPool = useMemo(() => {
     return PERFIL_CARDS.filter((c) => {
       if (division !== "all" && c.division !== division) return false;
@@ -85,6 +118,18 @@ export default function PerfilGame() {
       return true;
     });
   }, [division, difficulty, theme]);
+
+  // Live theme counts under current division/difficulty
+  const themeCounts = useMemo(() => {
+    const counts = { all: 0 };
+    for (const c of PERFIL_CARDS) {
+      if (division !== "all" && c.division !== division) continue;
+      if (difficulty !== "all" && c.difficulty !== difficulty) continue;
+      counts.all += 1;
+      counts[c.theme] = (counts[c.theme] || 0) + 1;
+    }
+    return counts;
+  }, [division, difficulty]);
 
   useEffect(() => {
     if (!timerOn || timerPreset === 0) return;
@@ -102,6 +147,7 @@ export default function PerfilGame() {
   }, [timerOn, timerPreset]);
 
   const resetCardUI = (startClock = false) => {
+    magicAudio.stopVoice();
     setRevealedClues([0]);
     setRevealedAnswer(false);
     setPeeking(false);
@@ -112,10 +158,22 @@ export default function PerfilGame() {
     setTimerOn(startClock && timerPreset > 0);
   };
 
+  const buildOrderedDeck = (pool, lastId = null) => {
+    if (!prioritizeUnseen) {
+      return shuffleFresh(pool, (c) => c.id, lastId);
+    }
+    const unseen = pool.filter((c) => !discoveredIds.includes(c.id));
+    const seen = pool.filter((c) => discoveredIds.includes(c.id));
+    return [
+      ...shuffleFresh(unseen, (c) => c.id, lastId),
+      ...shuffleFresh(seen, (c) => c.id, null),
+    ];
+  };
+
   const startDeck = () => {
     const pool = matchingPool.length > 0 ? matchingPool : PERFIL_CARDS;
     const lastId = deck[cardIndex]?.id || null;
-    const fresh = shuffleFresh(pool, (c) => c.id, lastId);
+    const fresh = buildOrderedDeck(pool, lastId);
     magicAudio.spellCast();
     setDeck(fresh);
     setCardIndex(0);
@@ -153,10 +211,14 @@ export default function PerfilGame() {
       magicAudio.correct();
       setSoloScore((s) => s + potentialPoints);
       setSoloSolved((n) => n + 1);
+      setSoloStreak((st) => st + 1);
       setGuessFeedback("correct");
       setRevealedAnswer(true);
+      markDiscovered(currentCard.id);
+      magicAudio.playVoice("dumbledore_perfil_win");
     } else {
       magicAudio.wrong();
+      setSoloStreak(0);
       setGuessFeedback("wrong");
       setGuessInput("");
       revealNextClue();
@@ -170,9 +232,8 @@ export default function PerfilGame() {
       resetCardUI(mode === "mesa");
       magicAudio.sparkle();
     } else {
-      // Re-shuffle automatically when reaching the end of the deck
       const lastId = currentCard?.id || null;
-      const fresh = shuffleFresh(deck, (c) => c.id, lastId);
+      const fresh = buildOrderedDeck(deck, lastId);
       setDeck(fresh);
       setCardIndex(0);
       resetCardUI(mode === "mesa");
@@ -197,7 +258,9 @@ export default function PerfilGame() {
     );
     setRevealedAnswer(true);
     setTimerOn(false);
+    if (currentCard) markDiscovered(currentCard.id);
     magicAudio.reveal();
+    magicAudio.playVoice("dumbledore_perfil_win");
     setAwardNotice(`+${potentialPoints} pts para ${team.name}!`);
   };
 
@@ -228,15 +291,55 @@ export default function PerfilGame() {
       <section className="perfil-view">
         <div className="section-head">
           <span className="wiz-eyebrow">
-            <HelpCircle size={13} /> Jogo de Cartas • {PERFIL_CARDS.length} Cartas Bruxas
+            <HelpCircle size={13} /> Jogo de Cartas • {PERFIL_CARDS.length} Cartas • 5 Temas
           </span>
           <h2 className="wiz-title">Perfil Bruxo</h2>
           <p className="wiz-subtitle">
-            Revele dicas de 1 a 10 e descubra quem ou o que está escondido — quanto menos dicas usar, mais pontos ganha.
+            Personagens com fotos reais, criaturas, lugares, relíquias, feitiços e cartas exclusivas dos livros em pergaminho.
           </p>
+
+          <button
+            type="button"
+            className={`btn-dumbledore-greet ${speakingDumbledore ? "is-speaking" : ""}`}
+            onClick={() => {
+              if (speakingDumbledore) {
+                magicAudio.stopVoice();
+                setSpeakingDumbledore(false);
+              } else {
+                magicAudio.playVoice("dumbledore_perfil_intro", {
+                  onStart: () => setSpeakingDumbledore(true),
+                  onEnd: () => setSpeakingDumbledore(false),
+                });
+              }
+            }}
+          >
+            <img src="/images/perfil/alvo-dumbledore.webp" alt="Prof. Dumbledore" />
+            <Volume2 size={14} />
+            <span>
+              {speakingDumbledore ? "Prof. Dumbledore falando..." : "Ouvir Prof. Dumbledore"}
+            </span>
+          </button>
         </div>
 
         <WizFrame className="perfil-lobby-card">
+          {/* Discovered Progress */}
+          <div className="perfil-collection-bar">
+            <span>
+              <Trophy size={14} /> Coleção descoberta:{" "}
+              <strong>
+                {discoveredIds.length} / {PERFIL_CARDS.length}
+              </strong>
+            </span>
+            <label className="unseen-toggle">
+              <input
+                type="checkbox"
+                checked={prioritizeUnseen}
+                onChange={(e) => setPrioritizeUnseen(e.target.checked)}
+              />
+              <span>Priorizar cartas inéditas</span>
+            </label>
+          </div>
+
           {/* Mode selector */}
           <div className="perfil-mode-row">
             <button
@@ -304,16 +407,19 @@ export default function PerfilGame() {
             <div className="filter-group">
               <label>Tema de Harry Potter</label>
               <div className="chip-row">
-                {PERFIL_THEMES.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    className={`filter-chip ${theme === t.id ? "is-active" : ""}`}
-                    onClick={() => setTheme(t.id)}
-                  >
-                    {t.label}
-                  </button>
-                ))}
+                {PERFIL_THEMES.map((t) => {
+                  const cnt = themeCounts[t.id] || 0;
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      className={`filter-chip ${theme === t.id ? "is-active" : ""}`}
+                      onClick={() => setTheme(t.id)}
+                    >
+                      {t.label} <span className="chip-count">{cnt}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -343,19 +449,27 @@ export default function PerfilGame() {
   const showIdentity = revealedAnswer || peeking;
   const cardHouseObj =
     currentCard.house && HOUSES[currentCard.house] ? HOUSES[currentCard.house] : null;
+  const isCardDiscovered = discoveredIds.includes(currentCard.id);
 
   return (
     <section className="perfil-view">
       {/* Top Bar */}
       <div className="perfil-play-bar">
-        <button type="button" className="btn-back-chip" onClick={() => setScreen("lobby")}>
+        <button
+          type="button"
+          className="btn-back-chip"
+          onClick={() => {
+            magicAudio.stopVoice();
+            setScreen("lobby");
+          }}
+        >
           ← Filtros ({deck.length} cartas)
         </button>
 
         <div className="perfil-bar-right">
           {mode === "solo" ? (
             <span className="exam-score-pill">
-              {soloScore} pts • {soloSolved} acertos
+              {soloScore} pts • {soloSolved} acertos{soloStreak >= 2 ? ` • ${soloStreak}x` : ""}
             </span>
           ) : (
             <div className="timer-pills">
@@ -397,6 +511,7 @@ export default function PerfilGame() {
             </span>
             <span className="perfil-meta-tag">{THEME_LABELS[currentCard.theme]}</span>
             <span className="perfil-meta-tag">{DIFF_LABELS[currentCard.difficulty]}</span>
+            {isCardDiscovered && <span className="sorted-chip">Descoberta</span>}
           </div>
 
           <div className={`perfil-portrait-frame ${showIdentity ? "is-revealed" : "is-sealed"}`}>
@@ -414,7 +529,6 @@ export default function PerfilGame() {
                   </div>
                 </div>
               ) : (
-                /* Book-exclusive card without movie photo -> Ornate Wizarding Parchment Name Plaque */
                 <div className="book-parchment-plaque">
                   <HouseCrest houseId={currentCard.house || "neutral"} size={66} />
                   <span className="plaque-origin">
@@ -425,13 +539,12 @@ export default function PerfilGame() {
                 </div>
               )
             ) : (
-              /* Sealed Mystery Card Back */
               <div className="mystery-card-back">
                 <HouseCrest houseId="neutral" size={84} />
                 <span className="mystery-points">Valendo {potentialPoints} pts</span>
                 <p>
                   {mode === "solo"
-                    ? "Abra dicas e descubra quem está selado"
+                    ? "Abra dicas e descubra quem ou o que está selado"
                     : "Segure 'Espiar' para ler a resposta"}
                 </p>
                 {cardHouseObj && revealedClues.length >= 6 && (
@@ -512,12 +625,21 @@ export default function PerfilGame() {
             })}
           </div>
 
-          {/* Open Clues List */}
+          {/* Open Clues List with optional Voice Readout button */}
           <ol className="clues-list">
             {revealedClues.map((idx) => (
               <li key={idx} className="clue-item">
                 <span className="clue-idx">{idx + 1}</span>
-                <span>{currentCard.clues[idx]}</span>
+                <span className="clue-text">{currentCard.clues[idx]}</span>
+                <button
+                  type="button"
+                  className="btn-clue-speak"
+                  onClick={() => magicAudio.speakFallback(`Dica ${idx + 1}. ${currentCard.clues[idx]}`)}
+                  title="Ler esta dica em voz alta"
+                  aria-label={`Ler dica ${idx + 1}`}
+                >
+                  <Volume2 size={13} />
+                </button>
               </li>
             ))}
           </ol>
@@ -537,7 +659,7 @@ export default function PerfilGame() {
                     type="text"
                     value={guessInput}
                     onChange={(e) => setGuessInput(e.target.value)}
-                    placeholder="Digite seu palpite (ex: Snape, Dobby, Pirraça)..."
+                    placeholder="Digite seu palpite (ex: Snape, Polissuco, Pirraça)..."
                     className="wiz-input"
                     autoComplete="off"
                   />

@@ -1,5 +1,6 @@
-// Exames Oficiais das Casas de Hogwarts (com nomes canônicos das provas de Harry Potter)
-// Atingir >= 6/8 (Nota Aceitável "A" ou superior) libera o tema da Sala Comunal da Casa!
+// Exames Oficiais das Casas de Hogwarts (64 perguntas — 16 por Casa)
+// Cada exame sorteia 8 perguntas aleatórias + alternativas embaralhadas.
+// Atingir >= 6/8 (Nota Aceitável "A" ou superior) libera a Sala Comunal da Casa!
 
 export const HOUSE_UNLOCK_MIN_SCORE = 6;
 export const HOUSE_QUIZ_TOTAL = 8;
@@ -13,6 +14,7 @@ export const HOUSE_QUIZZES = {
     examiner: "Profa. Minerva McGonagall",
     questions: [
       {
+        id: "hq_gryffindor_01",
         question: "Quem guarda a entrada da Sala Comunal da Grifinória no sétimo andar?",
         options: [
           "O retrato da Mulher Gorda",
@@ -24,6 +26,7 @@ export const HOUSE_QUIZZES = {
         explanation: "O retrato da Mulher Gorda exige a senha correta antes de girar para revelar a entrada.",
       },
       {
+        id: "hq_gryffindor_02",
         question: "Qual é o nome verdadeiro de Nick-Quase-Sem-Cabeça, o fantasma da Grifinória?",
         options: [
           "Sir Nicholas de Mimsy-Porpington",
@@ -35,6 +38,7 @@ export const HOUSE_QUIZZES = {
         explanation: "Hermione recita seu título completo de cor: Sir Nicholas de Mimsy-Porpington.",
       },
       {
+        id: "hq_gryffindor_03",
         question: "O que apenas um verdadeiro aluno da Grifinória consegue puxar de dentro do Chapéu Seletor em apuros?",
         options: [
           "A Espada de Godric Gryffindor",
@@ -46,18 +50,21 @@ export const HOUSE_QUIZZES = {
         explanation: "Tanto Harry (na Câmara Secreta) quanto Neville (na Batalha de Hogwarts) retiraram a espada do Chapéu.",
       },
       {
+        id: "hq_gryffindor_04",
         question: "Qual professora é a Diretora da Casa Grifinória durante os anos de Harry em Hogwarts?",
         options: ["Minerva McGonagall", "Pomona Sprout", "Sibila Trelawney", "Aurora Sinistra"],
         answer: "Minerva McGonagall",
         explanation: "A Professora de Transfiguração, Minerva McGonagall, chefia a Grifinória com rigor e justiça.",
       },
       {
+        id: "hq_gryffindor_05",
         question: "Qual era o vilarejo natal de Godric Gryffindor, onde também moraram os Potter e os Dumbledore?",
         options: ["Godric's Hollow", "Little Hangleton", "Ottery St. Catchpole", "Hogsmeade"],
         answer: "Godric's Hollow",
         explanation: "Godric's Hollow recebeu esse nome em homenagem ao fundador Godric Gryffindor.",
       },
       {
+        id: "hq_gryffindor_06",
         question: "Quem forjou a Espada de Godric Gryffindor segundo os livros?",
         options: [
           "O rei duende Ragnuk I",
@@ -69,6 +76,7 @@ export const HOUSE_QUIZZES = {
         explanation: "A espada foi forjada em prata pura pelo rei duende Ragnuk I.",
       },
       {
+        id: "hq_gryffindor_07",
         question: "O que acontece quando um menino tenta subir a escada do dormitório feminino na Torre da Grifinória?",
         options: [
           "Os degraus se achatam e viram um escorregador de pedra",
@@ -80,10 +88,67 @@ export const HOUSE_QUIZZES = {
         explanation: "Os fundadores enfeitiçaram a escada feminina para virar um escorregador se um menino subir.",
       },
       {
+        id: "hq_gryffindor_08",
         question: "Qual pedra preciosa marca os pontos da Grifinória nas ampulhetas do Salão Principal?",
         options: ["Rubis", "Granadas", "Topázios", "Diamantes vermelhos"],
         answer: "Rubis",
         explanation: "A ampulheta da Grifinória acumula rubis cintilantes.",
+      },
+      {
+        id: "hq_gryffindor_09",
+        question: "Qual foi a primeira senha da Sala Comunal da Grifinória que Harry ouviu em seu primeiro ano?",
+        options: ["Caput Draconis", "Focinho de Porco", "Fortuna Major", "Mimbulus Mimbletonia"],
+        answer: "Caput Draconis",
+        explanation: "Percy Weasley diz 'Caput Draconis' à Mulher Gorda na primeira noite em Hogwarts.",
+      },
+      {
+        id: "hq_gryffindor_10",
+        question: "Quem substituiu temporariamente a Mulher Gorda como guardião da Torre da Grifinória no terceiro ano?",
+        options: ["Sir Cadogan", "O Barão Sangrento", "Phineas Nigellus Black", "O retrato de Godric"],
+        answer: "Sir Cadogan",
+        explanation: "Após o ataque de Sirius Black ao quadro da Mulher Gorda, o excêntrico cavaleiro Sir Cadogan assumiu o posto.",
+      },
+      {
+        id: "hq_gryffindor_11",
+        question: "Quem foi o capitão do time de Quadribol da Grifinória quando Harry entrou no primeiro ano?",
+        options: ["Olívio Wood", "Angelina Johnson", "Carlinhos Weasley", "Fred Weasley"],
+        answer: "Olívio Wood",
+        explanation: "Olívio Wood treinou Harry incansavelmente até a Grifinória vencer a Taça de Quadribol no terceiro ano.",
+      },
+      {
+        id: "hq_gryffindor_12",
+        question: "Qual dos quatro fundadores cedeu originalmente o próprio chapéu para ser encantado como Chapéu Seletor?",
+        options: ["Godric Gryffindor", "Rowena Ravenclaw", "Helga Hufflepuff", "Salazar Slytherin"],
+        answer: "Godric Gryffindor",
+        explanation: "Godric Gryffindor tirou o chapéu da cabeça e os quatro fundadores colocaram nele suas mentes.",
+      },
+      {
+        id: "hq_gryffindor_13",
+        question: "Qual membro da família Black quebrou séculos de tradição familiar ao ser selecionado para a Grifinória?",
+        options: ["Sirius Black", "Régulo Black", "Bellatrix Black", "Andrômeda Black"],
+        answer: "Sirius Black",
+        explanation: "Sirius Black foi o único Black daquela geração a ir para a Grifinória em vez da Sonserina.",
+      },
+      {
+        id: "hq_gryffindor_14",
+        question: "Quantos pontos Alvo Dumbledore concedeu a Neville Longbottom no fim do primeiro ano por enfrentar os amigos?",
+        options: ["10 pontos", "20 pontos", "50 pontos", "15 pontos"],
+        answer: "10 pontos",
+        explanation: "Os 10 pontos finais dados a Neville deram a vitória da Taça das Casas à Grifinória.",
+      },
+      {
+        id: "hq_gryffindor_15",
+        question: "Em qual ano escolar Harry Potter foi nomeado Capitão do time de Quadribol da Grifinória?",
+        options: ["Sexto ano", "Quinto ano", "Quarto ano", "Sétimo ano"],
+        answer: "Sexto ano",
+        explanation: "No sexto ano (Enigma do Príncipe), Harry se torna capitão e conduz os testes do time.",
+      },
+      {
+        id: "hq_gryffindor_16",
+        question: "Qual era o elemento clássico associado à Casa Grifinória?",
+        options: ["Fogo", "Terra", "Ar", "Água"],
+        answer: "Fogo",
+        explanation: "Grifinória corresponde ao elemento Fogo, refletido em suas cores escarlate e dourado.",
       },
     ],
   },
@@ -96,6 +161,7 @@ export const HOUSE_QUIZZES = {
     examiner: "Prof. Severo Snape",
     questions: [
       {
+        id: "hq_slytherin_01",
         question: "Onde fica localizada a Sala Comunal da Sonserina?",
         options: [
           "Nas masmorras, sob as águas esverdeadas do Lago Negro",
@@ -107,6 +173,7 @@ export const HOUSE_QUIZZES = {
         explanation: "Suas janelas ficam abaixo da superfície do Lago Negro, trazendo o brilho esmeralda.",
       },
       {
+        id: "hq_slytherin_02",
         question: "Qual dom mágico raro Salazar Slytherin transmitiu aos seus descendentes?",
         options: [
           "Ofidioglossia (falar a língua das cobras)",
@@ -118,12 +185,14 @@ export const HOUSE_QUIZZES = {
         explanation: "Salazar era conhecido como 'Língua de Cobra' por falar Ofidioglossia.",
       },
       {
+        id: "hq_slytherin_03",
         question: "Quem assume a direção da Casa Sonserina após Severo Snape deixar o cargo de professor de Poções?",
         options: ["Horácio Slughorn", "Lúcio Malfoy", "Alecto Carrow", "Narcisa Malfoy"],
         answer: "Horácio Slughorn",
         explanation: "Horácio Slughorn retorna como Diretor da Sonserina e luta por Hogwarts.",
       },
       {
+        id: "hq_slytherin_04",
         question: "Qual era a relíquia pessoal de Salazar Slytherin que passou para a família Gaunt?",
         options: [
           "Um medalhão de ouro com um 'S' de esmeraldas",
@@ -135,12 +204,14 @@ export const HOUSE_QUIZZES = {
         explanation: "O Medalhão de Slytherin só abria quando alguém falava em Ofidioglossia.",
       },
       {
+        id: "hq_slytherin_05",
         question: "Qual ex-aluno da Sonserina sacrificou a vida na caverna dos Inferi para roubar uma Horcrux?",
         options: ["Régulo Arcturo Black (R.A.B.)", "Severo Snape", "Andrômeda Black", "Bartô Crouch Jr."],
         answer: "Régulo Arcturo Black (R.A.B.)",
         explanation: "Régulo descobriu o segredo de Voldemort e trocou o medalhão com a ajuda de Monstro.",
       },
       {
+        id: "hq_slytherin_06",
         question: "Por que o Barão Sangrento, fantasma da Sonserina, carrega correntes pesadas?",
         options: [
           "Como penitência por ter tirado a vida de Helena Ravenclaw e a própria",
@@ -152,16 +223,74 @@ export const HOUSE_QUIZZES = {
         explanation: "A Dama Cinzenta revela essa tragédia a Harry na Batalha de Hogwarts.",
       },
       {
+        id: "hq_slytherin_07",
         question: "Qual lendário bruxo medieval da história britânica estudou na Sonserina?",
         options: ["Merlin", "Beedle, o Bardo", "Nicolau Flamel", "Ignoto Peverell"],
         answer: "Merlin",
         explanation: "No cânone oficial, o próprio Merlin foi selecionado para a Sonserina.",
       },
       {
+        id: "hq_slytherin_08",
         question: "Qual pedra preciosa marca os pontos da Sonserina no Salão Principal?",
         options: ["Esmeraldas", "Jades imperiais", "Turmalinas", "Safiras verdes"],
         answer: "Esmeraldas",
         explanation: "As esmeraldas preenchem a ampulheta da Sonserina.",
+      },
+      {
+        id: "hq_slytherin_09",
+        question: "Qual era a senha da Sala Comunal da Sonserina que Harry e Rony usaram disfarçados de Crabbe e Goyle?",
+        options: ["Sangue-Puro", "Serpente Real", "Salazar", "Lago Negro"],
+        answer: "Sangue-Puro",
+        explanation: "Draco Malfoy os conduz às masmorras e pronuncia 'Sangue-Puro' diante da parede de pedra.",
+      },
+      {
+        id: "hq_slytherin_10",
+        question: "Quem foi o capitão do time de Quadribol da Sonserina nos primeiros anos de Harry em Hogwarts?",
+        options: ["Marcos Flint", "Draco Malfoy", "Blásio Zabini", "Terêncio Higgs"],
+        answer: "Marcos Flint",
+        explanation: "Marcos Flint liderava o time da Sonserina com táticas agressivas até se formar.",
+      },
+      {
+        id: "hq_slytherin_11",
+        question: "Qual antigo diretor de Hogwarts da Casa Sonserina tinha um retrato conectado entre o castelo e o Largo Grimmauld?",
+        options: ["Phineas Nigellus Black", "Armando Dippet", "Everardo", "Dilys Derwent"],
+        answer: "Phineas Nigellus Black",
+        explanation: "Phineas Nigellus Black era tataravô de Sirius e ajudou a passar recados entre os quadros.",
+      },
+      {
+        id: "hq_slytherin_12",
+        question: "Por quantos anos seguidos a Sonserina havia vencido a Taça das Casas antes da chegada de Harry Potter?",
+        options: ["Seis anos consecutivos", "Três anos consecutivos", "Dez anos consecutivos", "Dois anos consecutivos"],
+        answer: "Seis anos consecutivos",
+        explanation: "A Sonserina ostentava uma sequência de seis títulos seguidos antes de ser superada no 1º ano de Harry.",
+      },
+      {
+        id: "hq_slytherin_13",
+        question: "Qual membro da família Tonks estudou originalmente na Sonserina antes de romper com o preconceito puro-sangue?",
+        options: ["Andrômeda Tonks", "Ninfadora Tonks", "Ted Tonks", "Teddy Lupin"],
+        answer: "Andrômeda Tonks",
+        explanation: "Andrômeda Black foi da Sonserina, mas se casou com o nascido trouxa Ted Tonks.",
+      },
+      {
+        id: "hq_slytherin_14",
+        question: "Qual era o elemento clássico associado à Casa Sonserina?",
+        options: ["Água", "Fogo", "Ar", "Terra"],
+        answer: "Água",
+        explanation: "A Sonserina corresponde ao elemento Água, reforçado por sua sala comunal sob o Lago Negro.",
+      },
+      {
+        id: "hq_slytherin_15",
+        question: "Quem destruiu o Medalhão de Salazar Slytherin usando a Espada de Gryffindor?",
+        options: ["Rony Weasley", "Harry Potter", "Hermione Granger", "Neville Longbottom"],
+        answer: "Rony Weasley",
+        explanation: "Após vencer as ilusões lançadas pelo medalhão, Rony o golpeou com a espada na Floresta de Deão.",
+      },
+      {
+        id: "hq_slytherin_16",
+        question: "Qual poltergeist de Hogwarts tem medo real do Barão Sangrento, fantasma da Sonserina?",
+        options: ["Pirraça", "Murta Que Geme", "Nick-Quase-Sem-Cabeça", "Professor Binns"],
+        answer: "Pirraça",
+        explanation: "O Barão Sangrento é praticamente a única figura em Hogwarts capaz de fazer Pirraça recuar.",
       },
     ],
   },
@@ -174,6 +303,7 @@ export const HOUSE_QUIZZES = {
     examiner: "Prof. Fílio Flitwick",
     questions: [
       {
+        id: "hq_ravenclaw_01",
         question: "Como um aluno entra na Sala Comunal da Corvinal na Torre Oeste?",
         options: [
           "Respondendo a um enigma feito pela aldrava de águia de bronze",
@@ -185,18 +315,21 @@ export const HOUSE_QUIZZES = {
         explanation: "A porta não tem fechadura: só se abre para quem responde com sabedoria.",
       },
       {
+        id: "hq_ravenclaw_02",
         question: "Qual é o animal oficial no brasão da Corvinal?",
         options: ["Uma Águia", "Um Corvo", "Um Falcão", "Uma Coruja"],
         answer: "Uma Águia",
         explanation: "Apesar do nome em inglês (Ravenclaw), o animal heráldico oficial é a Águia.",
       },
       {
+        id: "hq_ravenclaw_03",
         question: "Quem é o Diretor da Casa Corvinal e mestre de Feitiços?",
         options: ["Fílio Flitwick", "Gilderoy Lockhart", "Cuthbert Binns", "Quirinus Quirrell"],
         answer: "Fílio Flitwick",
         explanation: "O Professor Fílio Flitwick, ex-campeão de duelos, chefia a Corvinal.",
       },
       {
+        id: "hq_ravenclaw_04",
         question: "Qual inscrição está gravada no Diadema Perdido de Rowena Ravenclaw?",
         options: [
           "O espírito sem limites é o maior tesouro do homem",
@@ -208,6 +341,7 @@ export const HOUSE_QUIZZES = {
         explanation: "O lema imortal de Rowena está gravado no próprio Diadema.",
       },
       {
+        id: "hq_ravenclaw_05",
         question: "Quem era a Dama Cinzenta em vida antes de se tornar o fantasma da Corvinal?",
         options: [
           "Helena Ravenclaw, filha de Rowena",
@@ -219,6 +353,7 @@ export const HOUSE_QUIZZES = {
         explanation: "Helena fugiu com o diadema da mãe para uma floresta na Albânia.",
       },
       {
+        id: "hq_ravenclaw_06",
         question: "Qual foi a resposta de McGonagall ao enigma 'Onde vão parar os objetos que desaparecem?' no 7º livro?",
         options: [
           "No não-ser, isto é, em tudo",
@@ -230,16 +365,84 @@ export const HOUSE_QUIZZES = {
         explanation: "A aldrava elogia a resposta poética e abre a porta imediatamente.",
       },
       {
+        id: "hq_ravenclaw_07",
         question: "Qual famoso artesão de varinhas do Beco Diagonal pertencia à Corvinal?",
         options: ["Garrick Olivaras", "Gregorovitch", "Xenofílio Lovegood", "Bathsheda Babbling"],
         answer: "Garrick Olivaras",
         explanation: "Garrick Olivaras estudou na Corvinal antes de assumir a loja de varinhas.",
       },
       {
+        id: "hq_ravenclaw_08",
         question: "Quais são as cores originais da Corvinal nos livros?",
         options: ["Azul e Bronze", "Azul e Prata", "Roxo e Ouro", "Azul-marinho e Branco"],
         answer: "Azul e Bronze",
         explanation: "Nos livros, as cores são azul e bronze (o céu e as penas da águia).",
+      },
+      {
+        id: "hq_ravenclaw_09",
+        question: "Qual foi a resposta de Luna Lovegood ao enigma 'O que veio primeiro, a fênix ou a chama?'?",
+        options: [
+          "Um círculo não tem princípio",
+          "A fênix nasce da própria cinza",
+          "A chama aquece o tempo",
+          "Nenhuma das duas existe sem o ar",
+        ],
+        answer: "Um círculo não tem princípio",
+        explanation: "Luna responde com naturalidade filosófica, e a aldrava abre a porta da Torre Oeste.",
+      },
+      {
+        id: "hq_ravenclaw_10",
+        question: "Qual pedra preciosa marca os pontos da Corvinal nas ampulhetas do Salão Principal?",
+        options: ["Safiras", "Águas-marinhas", "Lápis-lazúli", "Turquesas"],
+        answer: "Safiras",
+        explanation: "Safiras azuis cintilam na ampulheta da Corvinal.",
+      },
+      {
+        id: "hq_ravenclaw_11",
+        question: "Qual famoso — e farsante — professor de Defesa Contra as Artes das Trevas estudou na Corvinal?",
+        options: ["Gilderoy Lockhart", "Remo Lupin", "Severo Snape", "Alastor Moody"],
+        answer: "Gilderoy Lockhart",
+        explanation: "Apesar de ser um impostor, Gilderoy Lockhart foi selecionado para a Corvinal quando jovem.",
+      },
+      {
+        id: "hq_ravenclaw_12",
+        question: "Que estátua imponente de mármore branco domina o interior da Sala Comunal da Corvinal?",
+        options: [
+          "Uma estátua de Rowena Ravenclaw usando seu diadema",
+          "Uma estátua de uma águia gigante",
+          "Um telescópio de ouro de Merlin",
+          "Um globo terrestre flutuante",
+        ],
+        answer: "Uma estátua de Rowena Ravenclaw usando seu diadema",
+        explanation: "Luna leva Harry até a sala comunal justamente para ver o formato do diadema na estátua.",
+      },
+      {
+        id: "hq_ravenclaw_13",
+        question: "Qual era o elemento clássico associado à Casa Corvinal?",
+        options: ["Ar", "Água", "Fogo", "Terra"],
+        answer: "Ar",
+        explanation: "Corvinal corresponde ao elemento Ar, representado pela águia e pela torre alta.",
+      },
+      {
+        id: "hq_ravenclaw_14",
+        question: "Qual jogadora da Corvinal era a Apanhadora do time de Quadribol da casa e foi o primeiro grande amor de Harry?",
+        options: ["Cho Chang", "Padma Patil", "Luna Lovegood", "Marietta Edgecombe"],
+        answer: "Cho Chang",
+        explanation: "Cho Chang jogava como apanhadora pela Corvinal e participou da Armada de Dumbledore.",
+      },
+      {
+        id: "hq_ravenclaw_15",
+        question: "Qual professora de Adivinhação de Hogwarts foi aluna da Corvinal em sua juventude?",
+        options: ["Sibila Trelawney", "Minerva McGonagall", "Pomona Sprout", "Rolanda Hooch"],
+        answer: "Sibila Trelawney",
+        explanation: "Sibila Trelawney pertenceu à Corvinal quando estudou em Hogwarts.",
+      },
+      {
+        id: "hq_ravenclaw_16",
+        question: "Quem inventou o Pó de Flu no século XIII e era ex-aluna da Corvinal?",
+        options: ["Ignatia Wildsmith", "Rowena Ravenclaw", "Perpetua Fancourt", "Laverne de Montmorency"],
+        answer: "Ignatia Wildsmith",
+        explanation: "Ignatia Wildsmith, ex-aluna da Corvinal, criou a rede de viagens por lareiras com Pó de Flu.",
       },
     ],
   },
@@ -252,6 +455,7 @@ export const HOUSE_QUIZZES = {
     examiner: "Profa. Pomona Sprout",
     questions: [
       {
+        id: "hq_hufflepuff_01",
         question: "Como se abre a entrada da Sala Comunal da Lufa-Lufa e o que ocorre se errar?",
         options: [
           "Batendo no barril certo no ritmo de 'Helga Hufflepuff'; quem erra leva banho de vinagre",
@@ -263,30 +467,35 @@ export const HOUSE_QUIZZES = {
         explanation: "A Lufa-Lufa possui o único sistema de defesa ativo que encharca intrusos com vinagre.",
       },
       {
+        id: "hq_hufflepuff_02",
         question: "Qual professora é a Diretora da Casa Lufa-Lufa?",
         options: ["Pomona Sprout", "Caridade Burbage", "Wilhelmina Grubbly-Plank", "Rolanda Hooch"],
         answer: "Pomona Sprout",
         explanation: "A Professora de Herbologia Pomona Sprout é a calorosa diretora da Lufa-Lufa.",
       },
       {
+        id: "hq_hufflepuff_03",
         question: "Na Batalha de Hogwarts, qual casa teve mais alunos maiores de idade ficando para lutar além da Grifinória?",
         options: ["Lufa-Lufa", "Corvinal", "Sonserina", "Beauxbatons"],
         answer: "Lufa-Lufa",
         explanation: "A Lufa-Lufa permaneceu quase inteira para defender Hogwarts por lealdade.",
       },
       {
+        id: "hq_hufflepuff_04",
         question: "Quem foi o campeão oficial de Hogwarts escolhido pelo Cálice de Fogo no 4º ano?",
         options: ["Cedrico Diggory", "Ernesto Macmillan", "Justino Finch-Fletchley", "Zacarias Smith"],
         answer: "Cedrico Diggory",
         explanation: "Cedrico Diggory representou Hogwarts e a Lufa-Lufa com honra no Torneio Tribruxo.",
       },
       {
+        id: "hq_hufflepuff_05",
         question: "Qual Auror e Metamorfomaga da Ordem da Fênix estudou na Lufa-Lufa?",
         options: ["Ninfadora Tonks", "Emmeline Vance", "Héstia Jones", "Alice Longbottom"],
         answer: "Ninfadora Tonks",
         explanation: "Ninfadora Tonks foi aluna da Lufa-Lufa em Hogwarts.",
       },
       {
+        id: "hq_hufflepuff_06",
         question: "Pelo que Helga Hufflepuff era especialmente famosa na comunidade bruxa medieval?",
         options: [
           "Feitiços culinários e receitas dos banquetes de Hogwarts",
@@ -298,12 +507,14 @@ export const HOUSE_QUIZZES = {
         explanation: "Muitas receitas servidas até hoje nos banquetes de Hogwarts foram criadas por Helga.",
       },
       {
+        id: "hq_hufflepuff_07",
         question: "Quem é o fantasma residente da Casa Lufa-Lufa?",
         options: ["O Frei Gorducho", "Sir Patrick Delaney-Podmore", "A Murta Que Geme", "O Barão Alegre"],
         answer: "O Frei Gorducho",
         explanation: "O Frei Gorducho é o fantasma mais acolhedor de Hogwarts.",
       },
       {
+        id: "hq_hufflepuff_08",
         question: "Qual era a relíquia pessoal de Helga Hufflepuff que pertencia a Hepzibá Smith?",
         options: [
           "Uma taça de ouro de duas alças com um texugo gravado",
@@ -313,6 +524,67 @@ export const HOUSE_QUIZZES = {
         ],
         answer: "Uma taça de ouro de duas alças com um texugo gravado",
         explanation: "A Taça de Helga Hufflepuff foi transformada em Horcrux por Voldemort.",
+      },
+      {
+        id: "hq_hufflepuff_09",
+        question: "Qual célebre magizoologista, autor de 'Animais Fantásticos e Onde Habitam', foi aluno da Lufa-Lufa?",
+        options: ["Newt Scamander", "Rúbeo Hagrid", "Nicolau Flamel", "Gilderoy Lockhart"],
+        answer: "Newt Scamander",
+        explanation: "Newt Scamander sempre carregou com orgulho o cachecol amarelo e preto da Lufa-Lufa.",
+      },
+      {
+        id: "hq_hufflepuff_10",
+        question: "Qual pedra preciosa (ou gema) marca os pontos da Lufa-Lufa nas ampulhetas do Salão Principal?",
+        options: ["Diamantes amarelos", "Topázios azuis", "Opala negra", "Rubis dourados"],
+        answer: "Diamantes amarelos",
+        explanation: "A ampulheta da Lufa-Lufa conta os pontos com diamantes amarelos brilhantes.",
+      },
+      {
+        id: "hq_hufflepuff_11",
+        question: "Qual era o elemento clássico associado à Casa Lufa-Lufa?",
+        options: ["Terra", "Fogo", "Água", "Ar"],
+        answer: "Terra",
+        explanation: "A Lufa-Lufa corresponde ao elemento Terra, refletido em sua conexão com a Herbologia e o subsolo.",
+      },
+      {
+        id: "hq_hufflepuff_12",
+        question: "Por que Helga Hufflepuff trouxe elfos domésticos para trabalhar nas cozinhas de Hogwarts segundo a história?",
+        options: [
+          "Para oferecer um refúgio seguro e protegê-los de maus-tratos fora do castelo",
+          "Para competir com outras escolas europeias",
+          "Porque não conseguia cozinhar sozinha",
+          "Por exigência do Ministério da Magia",
+        ],
+        answer: "Para oferecer um refúgio seguro e protegê-los de maus-tratos fora do castelo",
+        explanation: "Helga queria que os elfos tivessem um lar seguro onde não fossem abusados.",
+      },
+      {
+        id: "hq_hufflepuff_13",
+        question: "Qual aluno da Lufa-Lufa se tornou futuro dono do Caldeirão Furado e se casou com Neville Longbottom?",
+        options: ["Ana Abbott", "Susana Bones", "Ernesto Macmillan", "Justino Finch-Fletchley"],
+        answer: "Ana Abbott",
+        explanation: "Ana Abbott assumiu o Caldeirão Furado e se casou com o professor de Herbologia Neville Longbottom.",
+      },
+      {
+        id: "hq_hufflepuff_14",
+        question: "Qual casa de Hogwarts tem a fama de ter produzido menos bruxos das trevas em toda a história?",
+        options: ["Lufa-Lufa", "Grifinória", "Corvinal", "Sonserina"],
+        answer: "Lufa-Lufa",
+        explanation: "A Lufa-Lufa se orgulha de ter produzido historicamente o menor número de bruxos das trevas.",
+      },
+      {
+        id: "hq_hufflepuff_15",
+        question: "Quem destruiu a Taça de Helga Hufflepuff na Câmara Secreta usando uma presa de Basilisco?",
+        options: ["Hermione Granger", "Harry Potter", "Rony Weasley", "Gina Weasley"],
+        answer: "Hermione Granger",
+        explanation: "Rony abriu a Câmara Secreta imitando Ofidioglossia e deixou Hermione destruir a Taça.",
+      },
+      {
+        id: "hq_hufflepuff_16",
+        question: "Qual aluno da Lufa-Lufa foi petrificado pelo Basilisco no segundo ano junto com Nick-Quase-Sem-Cabeça?",
+        options: ["Justino Finch-Fletchley", "Ernesto Macmillan", "Cedrico Diggory", "Zacarias Smith"],
+        answer: "Justino Finch-Fletchley",
+        explanation: "Justino viu o Basilisco através do corpo translúcido de Nick, salvando-se da morte direta.",
       },
     ],
   },

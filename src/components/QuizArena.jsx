@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Film,
   BookOpen,
@@ -15,6 +15,7 @@ import {
 import { QUIZ_DIVISIONS, QUIZ_LEVELS, QUIZ_QUESTIONS } from "../data/quizData";
 import { prepareShuffledQuestions, shuffleArray, getHogwartsGrade } from "../utils/shuffle";
 import { WizFrame, HallowsDivider } from "./WizFrame";
+import NarratorBar from "./NarratorBar";
 import { magicAudio } from "../utils/sound";
 
 const ROMAN = ["I", "II", "III", "IV"];
@@ -33,19 +34,41 @@ export default function QuizArena() {
   const [hiddenOptions, setHiddenOptions] = useState([]);
   const [tipsLeft, setTipsLeft] = useState(2);
   const [reductoLeft, setReductoLeft] = useState(2);
+  const [speaking, setSpeaking] = useState(false);
   const lastFirstMap = useRef({});
+
+  useEffect(() => {
+    return () => magicAudio.stopVoice();
+  }, []);
 
   const divisionObj = useMemo(
     () => QUIZ_DIVISIONS.find((d) => d.id === division) || QUIZ_DIVISIONS[0],
     [division]
   );
 
+  // Minerva narrates Films; Dumbledore narrates Books!
+  const narratorChar = division === "movies" ? "minerva" : "dumbledore";
+
+  const playQuestionVoice = (q, div = division) => {
+    if (!q?.id) return;
+    const prefix = div === "movies" ? "minerva" : "dumbledore";
+    magicAudio.playVoice(`${prefix}_${q.id}`, {
+      onStart: () => setSpeaking(true),
+      onEnd: () => setSpeaking(false),
+      fallbackText: q.question,
+    });
+  };
+
   const currentQuestion = questions[currentIndex] || null;
 
   const startQuiz = (selectedLevel) => {
     const key = `${division}_${selectedLevel.id}`;
     const rawPool = QUIZ_QUESTIONS[division]?.[selectedLevel.id] || [];
-    const prepared = prepareShuffledQuestions(rawPool, lastFirstMap.current[key]);
+    // Draw 10 freshly shuffled questions from the 20-question pool!
+    const prepared = prepareShuffledQuestions(rawPool, lastFirstMap.current[key]).slice(
+      0,
+      selectedLevel.totalQuestions || 10
+    );
     if (prepared.length > 0) {
       lastFirstMap.current[key] = prepared[0].question;
     }
@@ -63,10 +86,16 @@ export default function QuizArena() {
     setTipsLeft(2);
     setReductoLeft(2);
     setStage("playing");
+
+    if (prepared[0]) {
+      playQuestionVoice(prepared[0], division);
+    }
   };
 
   const handleAnswer = (opt) => {
     if (selectedOption || !currentQuestion) return;
+    magicAudio.stopVoice();
+    setSpeaking(false);
     setSelectedOption(opt);
 
     if (opt === currentQuestion.answer) {
@@ -99,31 +128,47 @@ export default function QuizArena() {
 
   const handleNext = () => {
     if (currentIndex + 1 < questions.length) {
-      setCurrentIndex((i) => i + 1);
+      const nextIdx = currentIndex + 1;
+      setCurrentIndex(nextIdx);
       setSelectedOption(null);
       setShowTip(false);
       setHiddenOptions([]);
+      playQuestionVoice(questions[nextIdx], division);
       return;
     }
     setStage("result");
     if (score < level.minScore) {
       magicAudio.prank();
+      magicAudio.playVoice("dumbledore_quiz_fail", {
+        onStart: () => setSpeaking(true),
+        onEnd: () => setSpeaking(false),
+      });
     } else {
       magicAudio.reveal();
+      magicAudio.playVoice("dumbledore_quiz_win", {
+        onStart: () => setSpeaking(true),
+        onEnd: () => setSpeaking(false),
+      });
     }
   };
 
-  // SETUP SCREEN (COMPACT & VISUAL)
+  const exitToSetup = () => {
+    magicAudio.stopVoice();
+    setSpeaking(false);
+    setStage("setup");
+  };
+
+  // SETUP SCREEN
   if (stage === "setup") {
     return (
       <section className="quiz-view">
         <div className="section-head">
           <span className="wiz-eyebrow">
-            <Sparkles size={13} /> Saberes de Hogwarts
+            <Sparkles size={13} /> Saberes de Hogwarts • 160 Perguntas Narradas
           </span>
           <h2 className="wiz-title">Quiz Bruxo</h2>
           <p className="wiz-subtitle">
-            Escolha a edição e o grau de dificuldade. Perguntas e alternativas são embaralhadas a cada partida.
+            Filmes narrados pela Profa. Minerva e Livros pelo Prof. Dumbledore — 10 perguntas sorteadas de um banco de 20 por nível.
           </p>
         </div>
 
@@ -132,6 +177,7 @@ export default function QuizArena() {
           {QUIZ_DIVISIONS.map((div) => {
             const Icon = div.id === "movies" ? Film : BookOpen;
             const active = division === div.id;
+            const voiceTag = div.id === "movies" ? "Voz: Profa. Minerva" : "Voz: Prof. Dumbledore";
             return (
               <button
                 key={div.id}
@@ -145,14 +191,16 @@ export default function QuizArena() {
                 <Icon size={18} />
                 <div>
                   <strong>{div.name}</strong>
-                  <small>{div.subtitle}</small>
+                  <small>
+                    {div.subtitle} • {voiceTag}
+                  </small>
                 </div>
               </button>
             );
           })}
         </div>
 
-        <HallowsDivider label={`Níveis • ${divisionObj.name}`} />
+        <HallowsDivider label={`Níveis • ${divisionObj.name} (20 questões cada)`} />
 
         <div className="levels-grid">
           {QUIZ_LEVELS.map((lvl) => (
@@ -163,7 +211,9 @@ export default function QuizArena() {
             >
               <div className="level-top">
                 <span className="level-rank">{lvl.rank}</span>
-                <span className="level-meta">Mín. {lvl.minScore}/10</span>
+                <span className="level-meta">
+                  10 de {(QUIZ_QUESTIONS[division]?.[lvl.id] || []).length} • Mín. {lvl.minScore}
+                </span>
               </div>
               <h3>{lvl.name}</h3>
               <p>{lvl.description}</p>
@@ -229,9 +279,9 @@ export default function QuizArena() {
 
           <div className="action-row">
             <button type="button" className="btn-gold" onClick={() => startQuiz(level)}>
-              <RotateCcw size={16} /> Jogar Novamente
+              <RotateCcw size={16} /> Nova Rodada Aleatória
             </button>
-            <button type="button" className="btn-outline" onClick={() => setStage("setup")}>
+            <button type="button" className="btn-outline" onClick={exitToSetup}>
               Trocar Nível / Edição
             </button>
           </div>
@@ -248,13 +298,24 @@ export default function QuizArena() {
     <section className="quiz-view">
       <WizFrame className="exam-play-card">
         <div className="exam-play-header">
-          <button type="button" className="btn-back-chip" onClick={() => setStage("setup")}>
+          <button type="button" className="btn-back-chip" onClick={exitToSetup}>
             <ArrowLeft size={15} /> {divisionObj.name} • {level.name}
           </button>
           <div className="exam-score-pill">
             {currentIndex + 1}/{questions.length} • {score} pts
           </div>
         </div>
+
+        <NarratorBar
+          character={narratorChar}
+          speaking={speaking}
+          caption={`${divisionObj.name} • Questão ${currentIndex + 1}`}
+          onReplay={() => playQuestionVoice(currentQuestion, division)}
+          onStop={() => {
+            magicAudio.stopVoice();
+            setSpeaking(false);
+          }}
+        />
 
         <div className="wiz-progress">
           <div className="wiz-progress-fill" style={{ width: `${pct}%` }} />

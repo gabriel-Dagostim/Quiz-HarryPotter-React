@@ -5,15 +5,8 @@ import { pickNextSortingQuestion, TOTAL_SORTING_STEPS } from "../data/sortingDat
 import { shuffleArray } from "../utils/shuffle";
 import { HouseCrest } from "./HouseCrest";
 import { WizFrame, HallowsDivider } from "./WizFrame";
+import NarratorBar from "./NarratorBar";
 import { magicAudio } from "../utils/sound";
-
-const HAT_WHISPERS = [
-  "Hmm... difícil, muito difícil...",
-  "Muita coragem, estou vendo... e uma mente nada má...",
-  "Há talento aqui, ah sim, e uma sede de provar seu valor...",
-  "Onde vou colocar você? Vamos ouvir mais um pouco...",
-  "Interessante... muito interessante...",
-];
 
 const INITIAL_SCORES = { gryffindor: 0, slytherin: 0, ravenclaw: 0, hufflepuff: 0 };
 const INITIAL_VIRTUES = {
@@ -49,7 +42,6 @@ export default function SortingCeremony({
   const [scores, setScores] = useState(INITIAL_SCORES);
   const [virtues, setVirtues] = useState(INITIAL_VIRTUES);
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [hatLine, setHatLine] = useState("Sente-se no banquinho e deixe-me olhar dentro da sua mente...");
   const [hatSpeaking, setHatSpeaking] = useState(false);
   const [winnerId, setWinnerId] = useState(sortedHouse || null);
   const timerRef = useRef(null);
@@ -57,14 +49,16 @@ export default function SortingCeremony({
   useEffect(() => {
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
+      magicAudio.stopVoice();
     };
   }, []);
 
-  const triggerSpeak = (text, isShout = false) => {
-    setHatLine(text);
-    setHatSpeaking(true);
-    magicAudio.speakHat(text, isShout);
-    setTimeout(() => setHatSpeaking(false), isShout ? 3200 : 2200);
+  const playHatClip = (clipId, fallbackText) => {
+    magicAudio.playVoice(clipId, {
+      onStart: () => setHatSpeaking(true),
+      onEnd: () => setHatSpeaking(false),
+      fallbackText,
+    });
   };
 
   const startCeremony = (shouldReset = false) => {
@@ -78,7 +72,9 @@ export default function SortingCeremony({
     setWinnerId(null);
     setCurrentQuestion(firstQ);
     setStage("question");
-    triggerSpeak("Hmm... deixe-me ver o que há nessa sua mente...");
+    if (firstQ) {
+      playHatClip(`hat_${firstQ.id}`, `${firstQ.title}. ${firstQ.subtitle}`);
+    }
   };
 
   const handleChoose = (choice) => {
@@ -108,7 +104,10 @@ export default function SortingCeremony({
 
     if (nextStep >= TOTAL_SORTING_STEPS) {
       setStage("deliberating");
-      triggerSpeak("Difícil... muito difícil... mas agora eu sei exatamente onde você pertence!");
+      playHatClip(
+        "hat_deliberating",
+        "Difícil... muito difícil... Mas agora eu sei exatamente onde colocar você!"
+      );
 
       const ranked = [...HOUSE_ORDER].sort((a, b) => {
         const diff = (nextScores[b] || 0) - (nextScores[a] || 0);
@@ -121,8 +120,8 @@ export default function SortingCeremony({
         setStage("result");
         magicAudio.reveal();
         onCompleteHouse(chosen);
-        triggerSpeak(HOUSES[chosen].hatSpeech, true);
-      }, 2400);
+        playHatClip(`hat_win_${chosen}`, HOUSES[chosen].hatSpeech);
+      }, 3600);
       return;
     }
 
@@ -133,14 +132,12 @@ export default function SortingCeremony({
       setWinnerId(chosen);
       setStage("result");
       onCompleteHouse(chosen);
+      playHatClip(`hat_win_${chosen}`, HOUSES[chosen].hatSpeech);
       return;
     }
 
     setCurrentQuestion(nextQ);
-    if (nextStep === 3 || nextStep === 6 || nextStep === 8) {
-      const whisper = HAT_WHISPERS[Math.floor(Math.random() * HAT_WHISPERS.length)];
-      triggerSpeak(whisper);
-    }
+    playHatClip(`hat_${nextQ.id}`, `${nextQ.title}. ${nextQ.subtitle}`);
   };
 
   const topVirtues = useMemo(() => {
@@ -173,6 +170,14 @@ export default function SortingCeremony({
           <span className="wiz-eyebrow">Casa Selecionada</span>
           <h2 className="wiz-title">{house.name}</h2>
           <p className="wiz-subtitle">“{house.motto}”</p>
+
+          <button
+            type="button"
+            className="btn-voice-replay"
+            onClick={() => playHatClip(`hat_win_${sortedHouse}`, house.hatSpeech)}
+          >
+            <Volume2 size={15} /> Ouvir anúncio do Chapéu Seletor
+          </button>
 
           <div className="trait-pills">
             {house.traits.map((t) => (
@@ -227,10 +232,23 @@ export default function SortingCeremony({
             “Não há nada escondido em sua cabeça que o Chapéu Seletor não consiga ver.”
           </p>
 
+          <button
+            type="button"
+            className="btn-voice-replay"
+            onClick={() =>
+              playHatClip(
+                "hat_intro",
+                "Sente-se no banquinho e vista-me... Não há nada escondido em sua cabeça que o Chapéu Seletor não consiga ver!"
+              )
+            }
+          >
+            <Volume2 size={15} /> {hatSpeaking ? "Chapéu falando..." : "Ouvir o Chapéu Seletor"}
+          </button>
+
           <div className="sorting-meta-chips">
             <span>{TOTAL_SORTING_STEPS} Provas Aleatórias</span>
             <span>4 Casas de Hogwarts</span>
-            <span>Voz do Chapéu</span>
+            <span>Voz Real OmniVoice</span>
           </div>
 
           <button type="button" className="btn-gold btn-lg" onClick={() => startCeremony(false)}>
@@ -257,7 +275,7 @@ export default function SortingCeremony({
             />
           </div>
           <span className="wiz-eyebrow">Lendo sua mente...</span>
-          <h2 className="wiz-title">“{hatLine}”</h2>
+          <h2 className="wiz-title">“Difícil... muito difícil...”</h2>
         </WizFrame>
       </section>
     );
@@ -281,7 +299,7 @@ export default function SortingCeremony({
           <button
             type="button"
             className="btn-voice-replay"
-            onClick={() => triggerSpeak(house.hatSpeech, true)}
+            onClick={() => playHatClip(`hat_win_${winnerId}`, house.hatSpeech)}
           >
             <Volume2 size={15} /> Ouvir anúncio novamente
           </button>
@@ -334,13 +352,18 @@ export default function SortingCeremony({
     <section className="sorting-view">
       <WizFrame className="sorting-question-card">
         <div className="sorting-top-bar">
-          <div className={`hat-mini-speaker ${hatSpeaking ? "is-speaking" : ""}`}>
-            <img src="/images/props/sorting-hat.webp" alt="Chapéu Seletor" draggable={false} />
-            <p>“{hatLine}”</p>
-          </div>
-          <span className="step-badge">
-            {step + 1} / {TOTAL_SORTING_STEPS}
-          </span>
+          <NarratorBar
+            character="hat"
+            speaking={hatSpeaking}
+            caption={`Prova ${step + 1} de ${TOTAL_SORTING_STEPS}`}
+            onReplay={() =>
+              playHatClip(`hat_${currentQuestion.id}`, `${currentQuestion.title}. ${currentQuestion.subtitle}`)
+            }
+            onStop={() => {
+              magicAudio.stopVoice();
+              setHatSpeaking(false);
+            }}
+          />
         </div>
 
         <div className="wiz-progress">

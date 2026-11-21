@@ -1,4 +1,6 @@
-// Baralho oficial do Perfil Bruxo (Harry Potter — Filmes & Livros)
+import { EXTRA_PERFIL_CARDS } from "./perfilExtraData.js";
+
+// Baralho oficial do Perfil Bruxo (100 cartas — Harry Potter Filmes & Livros)
 // Cartas com foto real baixada usam `/images/perfil/<slug>.webp`.
 // Cartas exclusivas dos livros sem foto nos filmes usam `image: null` e exibem o Pergaminho Oficial com o Nome.
 
@@ -21,9 +23,10 @@ export const PERFIL_THEMES = [
   { id: "criatura", label: "Criaturas" },
   { id: "lugar", label: "Lugares" },
   { id: "objeto", label: "Objetos & Relíquias" },
+  { id: "feiticopocao", label: "Feitiços & Poções" },
 ];
 
-export const PERFIL_CARDS = [
+const BASE_PERFIL_CARDS = [
   // ===================== FILMES • PERSONAGENS =====================
   {
     id: "hp-harry",
@@ -1392,3 +1395,5 @@ export const PERFIL_CARDS = [
     ],
   },
 ];
+
+export const PERFIL_CARDS = [...BASE_PERFIL_CARDS, ...EXTRA_PERFIL_CARDS];
