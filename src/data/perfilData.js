@@ -1,6 +1,7 @@
 import { EXTRA_PERFIL_CARDS } from "./perfilExtraData.js";
+import { EXTRA_PERFIL_CARDS_2 } from "./perfilExtraData2.js";
 
-// Baralho oficial do Perfil Bruxo (100 cartas — Harry Potter Filmes & Livros)
+// Baralho oficial do Perfil Bruxo (160 cartas — Harry Potter Filmes & Livros)
 // Cartas com foto real baixada usam `/images/perfil/<slug>.webp`.
 // Cartas exclusivas dos livros sem foto nos filmes usam `image: null` e exibem o Pergaminho Oficial com o Nome.
 
@@ -1396,4 +1397,4 @@ const BASE_PERFIL_CARDS = [
   },
 ];
 
-export const PERFIL_CARDS = [...BASE_PERFIL_CARDS, ...EXTRA_PERFIL_CARDS];
+export const PERFIL_CARDS = [...BASE_PERFIL_CARDS, ...EXTRA_PERFIL_CARDS, ...EXTRA_PERFIL_CARDS_2];

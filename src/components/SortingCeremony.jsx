@@ -103,25 +103,44 @@ export default function SortingCeremony({
     setStep(nextStep);
 
     if (nextStep >= TOTAL_SORTING_STEPS) {
-      setStage("deliberating");
-      playHatClip(
-        "hat_deliberating",
-        "Difícil... muito difícil... Mas agora eu sei exatamente onde colocar você!"
-      );
-
       const ranked = [...HOUSE_ORDER].sort((a, b) => {
         const diff = (nextScores[b] || 0) - (nextScores[a] || 0);
         return diff !== 0 ? diff : Math.random() - 0.5;
       });
       const chosen = ranked[0];
 
-      timerRef.current = setTimeout(() => {
+      setStage("deliberating");
+      // Preload winning house announcement so it triggers with zero lag right after deliberation
+      magicAudio.preloadVoice(`hat_win_${chosen}`);
+
+      let revealed = false;
+      const revealHouse = () => {
+        if (revealed) return;
+        revealed = true;
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
         setWinnerId(chosen);
         setStage("result");
         magicAudio.reveal();
         onCompleteHouse(chosen);
         playHatClip(`hat_win_${chosen}`, HOUSES[chosen].hatSpeech);
-      }, 3600);
+      };
+
+      magicAudio.playVoice("hat_deliberating", {
+        onStart: () => setHatSpeaking(true),
+        onEnd: () => {
+          setHatSpeaking(false);
+          if (!revealed) {
+            timerRef.current = setTimeout(revealHouse, 420);
+          }
+        },
+        fallbackText: "Difícil... muito difícil... Mas agora eu sei exatamente onde colocar você!",
+      });
+
+      // Safety fallback in case audio is muted/blocked so user is never stuck
+      timerRef.current = setTimeout(revealHouse, 15500);
       return;
     }
 

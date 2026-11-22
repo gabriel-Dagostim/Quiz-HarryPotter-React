@@ -70,6 +70,9 @@ export default function HousesHall({
     if (prepared[0]) {
       playMinerva(`minerva_${prepared[0].id}`, prepared[0].question);
     }
+    if (prepared[1]) {
+      magicAudio.preloadVoice(`minerva_${prepared[1].id}`);
+    }
   };
 
   const handleAnswer = (opt) => {
@@ -94,6 +97,12 @@ export default function HousesHall({
       const nextQ = questions[nextIdx];
       if (nextQ) {
         playMinerva(`minerva_${nextQ.id}`, nextQ.question);
+      }
+      if (questions[nextIdx + 1]) {
+        magicAudio.preloadVoice(`minerva_${questions[nextIdx + 1].id}`);
+      } else {
+        magicAudio.preloadVoice("minerva_exam_pass");
+        magicAudio.preloadVoice("minerva_exam_fail");
       }
       return;
     }

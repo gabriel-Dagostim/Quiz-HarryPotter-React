@@ -20,9 +20,9 @@
   - **Edição dos Filmes (80 perguntas)** narradas pela **Profa. Minerva McGonagall**.
   - **Edição dos Livros (80 perguntas)** narradas pelo **Prof. Alvo Dumbledore**.
   - 4 níveis (**Trouxa**, **Aborto**, **N.O.M.s** e **N.I.E.M.s**), sorteando 10 perguntas aleatórias de um banco de 20 por nível, com Dica da Hermione e Feitiço Reducto 50/50.
-- **Perfil Bruxo (107 Cartas • 5 Temas):**
+- **Perfil Bruxo (174 Cartas • 5 Temas):**
   - **Filmes (1–8)** e **Livros (1–7)**, 3 dificuldades (**1º Ano**, **N.O.M.s**, **N.I.E.M.s**) e 5 temas (**Personagens**, **Criaturas**, **Lugares**, **Objetos & Relíquias**, **Feitiços & Poções**).
-  - **82 fotos reais** baixadas localmente + **25 cartas exclusivas dos livros/feitiços** exibidas em **Cartão-Pergaminho com Nome**.
+  - **112 fotos reais** baixadas localmente + **62 cartas em Cartão-Pergaminho com Nome** (incluindo exclusivos dos livros e feitiços/poções).
   - **Modo Solo** (adivinhe em 1 a 10 dicas + progresso da coleção salvo) e **Modo Mesa / Grupo** (botão anti-spoiler *Segurar para Espiar*, timer opcional e placar de equipes).
 
 ---

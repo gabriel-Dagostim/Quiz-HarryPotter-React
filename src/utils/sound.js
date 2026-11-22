@@ -1,18 +1,39 @@
-// Audio Engine: Pre-generated OmniVoice Character Voices (MP3) + Procedural Wizarding SFX (Web Audio API)
+// Audio Engine: Pre-generated OmniVoice Character Voices (Web Audio API decoded buffer playback)
+// + Procedural Wizarding SFX (Web Audio API)
 
 class MagicAudio {
   constructor() {
     this.ctx = null;
     this.enabled = true;
+    this.currentSource = null;
+    this.currentGain = null;
     this.currentAudio = null;
     this.currentClipId = null;
+    this.playSeq = 0;
+    this.abortCtrl = null;
+    this.bufferCache = new Map(); // clipId -> AudioBuffer
+    this.pendingFetches = new Map(); // clipId -> Promise<ArrayBuffer>
     this.voices = [];
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      const loadVoices = () => {
-        this.voices = window.speechSynthesis.getVoices() || [];
+
+    if (typeof window !== "undefined") {
+      if ("speechSynthesis" in window) {
+        const loadVoices = () => {
+          this.voices = window.speechSynthesis.getVoices() || [];
+        };
+        loadVoices();
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+
+      // Unlock AudioContext on first user interaction so voice playback never starts muted/clipped
+      const unlock = () => {
+        this.init();
+        if (this.ctx && this.ctx.state === "running") {
+          window.removeEventListener("pointerdown", unlock);
+          window.removeEventListener("keydown", unlock);
+        }
       };
-      loadVoices();
-      window.speechSynthesis.onvoiceschanged = loadVoices;
+      window.addEventListener("pointerdown", unlock, { passive: true });
+      window.addEventListener("keydown", unlock, { passive: true });
     }
   }
 
@@ -38,16 +59,46 @@ class MagicAudio {
   }
 
   stopVoice() {
+    this.playSeq += 1;
+    if (this.abortCtrl) {
+      try {
+        this.abortCtrl.abort();
+      } catch {
+        // ignore
+      }
+      this.abortCtrl = null;
+    }
+    if (this.currentSource) {
+      try {
+        this.currentSource.onended = null;
+        this.currentSource.stop();
+        this.currentSource.disconnect();
+      } catch {
+        // ignore
+      }
+      this.currentSource = null;
+    }
+    if (this.currentGain) {
+      try {
+        this.currentGain.disconnect();
+      } catch {
+        // ignore
+      }
+      this.currentGain = null;
+    }
     if (this.currentAudio) {
       try {
+        this.currentAudio.onended = null;
+        this.currentAudio.onerror = null;
         this.currentAudio.pause();
         this.currentAudio.currentTime = 0;
       } catch {
         // ignore
       }
       this.currentAudio = null;
-      this.currentClipId = null;
     }
+    this.currentClipId = null;
+
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       try {
         window.speechSynthesis.cancel();
@@ -57,8 +108,50 @@ class MagicAudio {
     }
   }
 
+  async _fetchAndDecode(clipId, signal) {
+    if (this.bufferCache.has(clipId)) {
+      return this.bufferCache.get(clipId);
+    }
+
+    const url = `/audio/voices/${clipId}.mp3?v=2`;
+    let arrayBufPromise = this.pendingFetches.get(clipId);
+    if (!arrayBufPromise) {
+      arrayBufPromise = fetch(url, { cache: "force-cache", signal })
+        .then((res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return res.arrayBuffer();
+        })
+        .finally(() => {
+          this.pendingFetches.delete(clipId);
+        });
+      this.pendingFetches.set(clipId, arrayBufPromise);
+    }
+
+    const rawBuf = await arrayBufPromise;
+    this.init();
+    if (!this.ctx) throw new Error("No AudioContext");
+
+    // decodeAudioData detaches the buffer, so pass a slice copy
+    const audioBuf = await this.ctx.decodeAudioData(rawBuf.slice(0));
+
+    // LRU cap at 48 decoded clips to keep memory tiny
+    if (this.bufferCache.size >= 48) {
+      const oldestKey = this.bufferCache.keys().next().value;
+      this.bufferCache.delete(oldestKey);
+    }
+    this.bufferCache.set(clipId, audioBuf);
+    return audioBuf;
+  }
+
+  preloadVoice(clipId) {
+    if (!clipId || !this.enabled || typeof window === "undefined") return;
+    if (this.bufferCache.has(clipId) || this.pendingFetches.has(clipId)) return;
+    this._fetchAndDecode(clipId).catch(() => {});
+  }
+
   /**
-   * Plays a pre-generated OmniVoice character MP3 from /audio/voices/<clipId>.mp3.
+   * Plays a pre-generated OmniVoice character MP3 from /audio/voices/<clipId>.mp3
+   * via Web Audio API AudioBufferSourceNode (eliminates browser MP3 buffering lag & start clipping).
    */
   playVoice(clipId, { onStart, onEnd, fallbackText } = {}) {
     this.stopVoice();
@@ -67,41 +160,106 @@ class MagicAudio {
       return;
     }
 
-    const audio = new Audio(`/audio/voices/${clipId}.mp3`);
-    audio.preload = "auto";
-    audio.volume = 0.96;
-    this.currentAudio = audio;
+    const seq = this.playSeq;
+    const ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    this.abortCtrl = ctrl;
     this.currentClipId = clipId;
 
-    let finished = false;
+    this.init();
+
     const finish = () => {
-      if (finished) return;
-      finished = true;
-      if (this.currentAudio === audio) {
-        this.currentAudio = null;
-        this.currentClipId = null;
-      }
+      if (this.playSeq !== seq) return;
+      this.currentSource = null;
+      this.currentGain = null;
+      this.currentAudio = null;
+      this.currentClipId = null;
       if (onEnd) onEnd();
     };
 
-    audio.onplay = () => {
-      if (onStart) onStart();
-    };
-    audio.onended = finish;
-    audio.onerror = () => {
-      finish();
-      if (fallbackText) {
-        this.speakFallback(fallbackText, { onStart, onEnd });
+    const run = async () => {
+      try {
+        if (!this.ctx) throw new Error("Web Audio unavailable");
+        if (this.ctx.state === "suspended") {
+          await this.ctx.resume();
+        }
+        if (this.ctx.state !== "running") {
+          // Browser blocked autoplay before user gesture; let user click "Ouvir"
+          finish();
+          return;
+        }
+
+        const buffer = await this._fetchAndDecode(clipId, ctrl?.signal);
+        if (this.playSeq !== seq || !this.enabled) return;
+
+        // Re-check context state right before starting
+        if (this.ctx.state === "suspended") {
+          await this.ctx.resume();
+        }
+        if (this.playSeq !== seq || this.ctx.state !== "running") {
+          finish();
+          return;
+        }
+
+        const source = this.ctx.createBufferSource();
+        source.buffer = buffer;
+
+        const gain = this.ctx.createGain();
+        const startAt = this.ctx.currentTime + 0.025; // 25ms lookahead prevents hardware wake-up clip
+        gain.gain.setValueAtTime(0.001, startAt);
+        gain.gain.linearRampToValueAtTime(0.98, startAt + 0.015);
+
+        source.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        this.currentSource = source;
+        this.currentGain = gain;
+
+        source.onended = () => {
+          finish();
+        };
+
+        source.start(startAt);
+        if (onStart) onStart();
+      } catch (err) {
+        if (this.playSeq !== seq) return;
+        if (err && err.name === "AbortError") return;
+
+        // Fallback to HTMLAudioElement if Web Audio decode failed
+        try {
+          const audio = new Audio(`/audio/voices/${clipId}.mp3?v=2`);
+          audio.preload = "auto";
+          audio.volume = 0.96;
+          this.currentAudio = audio;
+          let done = false;
+          const endFallback = () => {
+            if (done) return;
+            done = true;
+            finish();
+          };
+          audio.onplay = () => {
+            if (this.playSeq === seq && onStart) onStart();
+          };
+          audio.onended = endFallback;
+          audio.onerror = () => {
+            endFallback();
+            if (fallbackText) {
+              this.speakFallback(fallbackText, { onStart, onEnd });
+            }
+          };
+          const p = audio.play();
+          if (p && typeof p.catch === "function") {
+            p.catch(() => endFallback());
+          }
+        } catch {
+          finish();
+          if (fallbackText) {
+            this.speakFallback(fallbackText, { onStart, onEnd });
+          }
+        }
       }
     };
 
-    const p = audio.play();
-    if (p && typeof p.catch === "function") {
-      p.catch(() => {
-        // Autoplay blocked before first user gesture — silently finish so user can click "Ouvir"
-        finish();
-      });
-    }
+    run();
   }
 
   /**

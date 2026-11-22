@@ -90,6 +90,10 @@ export default function QuizArena() {
     if (prepared[0]) {
       playQuestionVoice(prepared[0], division);
     }
+    if (prepared[1]) {
+      const prefix = division === "movies" ? "minerva" : "dumbledore";
+      magicAudio.preloadVoice(`${prefix}_${prepared[1].id}`);
+    }
   };
 
   const handleAnswer = (opt) => {
@@ -134,6 +138,13 @@ export default function QuizArena() {
       setShowTip(false);
       setHiddenOptions([]);
       playQuestionVoice(questions[nextIdx], division);
+      if (questions[nextIdx + 1]) {
+        const prefix = division === "movies" ? "minerva" : "dumbledore";
+        magicAudio.preloadVoice(`${prefix}_${questions[nextIdx + 1].id}`);
+      } else {
+        magicAudio.preloadVoice("dumbledore_quiz_win");
+        magicAudio.preloadVoice("dumbledore_quiz_fail");
+      }
       return;
     }
     setStage("result");
