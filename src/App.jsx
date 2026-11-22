@@ -144,6 +144,7 @@ export default function App() {
         "--theme-surface-alt": currentThemeObj.colors.surfaceAlt,
         "--theme-glow": currentThemeObj.colors.glow,
         "--theme-ornament": currentThemeObj.colors.borderOrnament,
+        "--theme-rgb": currentThemeObj.particleColor || "226, 190, 104",
       }}
     >
       {/* Real Hogwarts Photography Backdrop with Theme Color Grading */}

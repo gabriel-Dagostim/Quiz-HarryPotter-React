@@ -6,18 +6,42 @@ const CHARACTERS = {
     role: "Cerimônia de Seleção",
     avatar: "/images/props/sorting-hat.webp",
     isProp: true,
+    tone: "neutral",
   },
   minerva: {
     name: "Profa. Minerva McGonagall",
-    role: "Banca de Hogwarts",
+    role: "Diretora da Grifinória",
     avatar: "/images/perfil/minerva-mcgonagall.webp",
     isProp: false,
+    tone: "gryffindor",
+  },
+  snape: {
+    name: "Prof. Severo Snape",
+    role: "Diretor da Sonserina • Poções",
+    avatar: "/images/perfil/severo-snape.webp",
+    isProp: false,
+    tone: "slytherin",
+  },
+  lockhart: {
+    name: "Prof. Gilderoy Lockhart",
+    role: "Banca da Corvinal • Autor Premiado",
+    avatar: "/images/perfil/gilderoy-lockhart.webp",
+    isProp: false,
+    tone: "ravenclaw",
+  },
+  cedric: {
+    name: "Cedrico Diggory",
+    role: "Monitor & Campeão da Lufa-Lufa",
+    avatar: "/images/perfil/cedrico-diggory.webp",
+    isProp: false,
+    tone: "hufflepuff",
   },
   dumbledore: {
     name: "Prof. Alvo Dumbledore",
     role: "Diretor de Hogwarts",
     avatar: "/images/perfil/alvo-dumbledore.webp",
     isProp: false,
+    tone: "neutral",
   },
 };
 
@@ -31,7 +55,7 @@ export default function NarratorBar({
   const char = CHARACTERS[character] || CHARACTERS.dumbledore;
 
   return (
-    <div className={`narrator-bar ${speaking ? "is-speaking" : ""}`}>
+    <div className={`narrator-bar narrator-tone-${char.tone} ${speaking ? "is-speaking" : ""}`}>
       <div className={`narrator-avatar ${char.isProp ? "is-prop" : ""}`}>
         <img src={char.avatar} alt={char.name} draggable={false} />
       </div>

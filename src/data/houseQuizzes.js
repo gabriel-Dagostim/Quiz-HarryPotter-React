@@ -12,6 +12,7 @@ export const HOUSE_QUIZZES = {
     title: "N.O.M. de Defesa Contra as Artes das Trevas",
     subtitle: "Prova da Espada de Gryffindor",
     examiner: "Profa. Minerva McGonagall",
+    voice: "minerva",
     questions: [
       {
         id: "hq_gryffindor_01",
@@ -159,6 +160,7 @@ export const HOUSE_QUIZZES = {
     title: "N.I.E.M. de Poções & Artes das Trevas",
     subtitle: "Prova da Câmara Secreta",
     examiner: "Prof. Severo Snape",
+    voice: "snape",
     questions: [
       {
         id: "hq_slytherin_01",
@@ -300,7 +302,8 @@ export const HOUSE_QUIZZES = {
     examCode: "N.I.E.M. • Feitiços & Runas",
     title: "N.I.E.M. de Feitiços & Enigma da Aldrava",
     subtitle: "Prova do Diadema de Ravenclaw",
-    examiner: "Prof. Fílio Flitwick",
+    examiner: "Prof. Gilderoy Lockhart",
+    voice: "lockhart",
     questions: [
       {
         id: "hq_ravenclaw_01",
@@ -452,7 +455,8 @@ export const HOUSE_QUIZZES = {
     examCode: "N.O.M. • Herbologia & Tribruxo",
     title: "N.O.M. de Herbologia & Torneio Tribruxo",
     subtitle: "Prova da Taça de Hufflepuff",
-    examiner: "Profa. Pomona Sprout",
+    examiner: "Cedrico Diggory",
+    voice: "cedric",
     questions: [
       {
         id: "hq_hufflepuff_01",

@@ -113,7 +113,7 @@ class MagicAudio {
       return this.bufferCache.get(clipId);
     }
 
-    const url = `/audio/voices/${clipId}.mp3?v=2`;
+    const url = `/audio/voices/${clipId}.mp3?v=3`;
     let arrayBufPromise = this.pendingFetches.get(clipId);
     if (!arrayBufPromise) {
       arrayBufPromise = fetch(url, { cache: "force-cache", signal })
@@ -226,7 +226,7 @@ class MagicAudio {
 
         // Fallback to HTMLAudioElement if Web Audio decode failed
         try {
-          const audio = new Audio(`/audio/voices/${clipId}.mp3?v=2`);
+          const audio = new Audio(`/audio/voices/${clipId}.mp3?v=3`);
           audio.preload = "auto";
           audio.volume = 0.96;
           this.currentAudio = audio;

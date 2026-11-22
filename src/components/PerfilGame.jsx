@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Shuffle,
   Eye,
@@ -38,6 +38,34 @@ const DEFAULT_TEAMS = [
 
 const TEAM_COLORS = ["#d94e3b", "#34b876", "#5ea0f5", "#eab93e", "#c97be8", "#e88b50"];
 
+const HOUSE_COMMENTATORS = {
+  gryffindor: {
+    prefix: "minerva_perfil",
+    name: "Profa. Minerva",
+    avatar: "/images/perfil/minerva-mcgonagall.webp",
+  },
+  slytherin: {
+    prefix: "snape_perfil",
+    name: "Prof. Snape",
+    avatar: "/images/perfil/severo-snape.webp",
+  },
+  ravenclaw: {
+    prefix: "lockhart_perfil",
+    name: "Prof. Lockhart",
+    avatar: "/images/perfil/gilderoy-lockhart.webp",
+  },
+  hufflepuff: {
+    prefix: "cedric_perfil",
+    name: "Cedrico Diggory",
+    avatar: "/images/perfil/cedrico-diggory.webp",
+  },
+  neutral: {
+    prefix: "dumbledore_perfil_win",
+    name: "Prof. Dumbledore",
+    avatar: "/images/perfil/alvo-dumbledore.webp",
+  },
+};
+
 const DIFF_LABELS = {
   facil: "1º Ano • Fácil",
   medio: "N.O.M.s • Médio",
@@ -60,6 +88,28 @@ export default function PerfilGame() {
   const [theme, setTheme] = useState("all");
   const [prioritizeUnseen, setPrioritizeUnseen] = useState(true);
   const [speakingDumbledore, setSpeakingDumbledore] = useState(false);
+  const [introToggle, setIntroToggle] = useState(0);
+  const winsCountRef = useRef(0);
+  const lastClipByPrefixRef = useRef({});
+
+  const playHouseComment = (card, force = false) => {
+    const houseKey = card?.house && HOUSE_COMMENTATORS[card.house] ? card.house : "neutral";
+    const commentator = HOUSE_COMMENTATORS[houseKey];
+    if (!force) {
+      winsCountRef.current += 1;
+      const n = winsCountRef.current;
+      // Only auto-speak on 1st win, every 3rd win, or a 10-point 1-clue master deduction!
+      const isMilestone = n === 1 || n % 3 === 0 || potentialPoints >= 10;
+      if (!isMilestone) return;
+    }
+    const prevIdx = lastClipByPrefixRef.current[commentator.prefix] || 0;
+    const nextIdx = (prevIdx % 3) + 1;
+    lastClipByPrefixRef.current[commentator.prefix] = nextIdx;
+    magicAudio.playVoice(`${commentator.prefix}_${nextIdx}`, {
+      onStart: () => setSpeakingDumbledore(true),
+      onEnd: () => setSpeakingDumbledore(false),
+    });
+  };
 
   // Persisted discovered cards tracker
   const [discoveredIds, setDiscoveredIds] = useState(() => {
@@ -215,7 +265,7 @@ export default function PerfilGame() {
       setGuessFeedback("correct");
       setRevealedAnswer(true);
       markDiscovered(currentCard.id);
-      magicAudio.playVoice("dumbledore_perfil_win");
+      playHouseComment(currentCard, false);
     } else {
       magicAudio.wrong();
       setSoloStreak(0);
@@ -260,7 +310,7 @@ export default function PerfilGame() {
     setTimerOn(false);
     if (currentCard) markDiscovered(currentCard.id);
     magicAudio.reveal();
-    magicAudio.playVoice("dumbledore_perfil_win");
+    playHouseComment(currentCard, false);
     setAwardNotice(`+${potentialPoints} pts para ${team.name}!`);
   };
 
@@ -306,7 +356,9 @@ export default function PerfilGame() {
                 magicAudio.stopVoice();
                 setSpeakingDumbledore(false);
               } else {
-                magicAudio.playVoice("dumbledore_perfil_intro", {
+                const nextIntro = (introToggle % 2) + 1;
+                setIntroToggle((n) => n + 1);
+                magicAudio.playVoice(`dumbledore_perfil_intro_${nextIntro}`, {
                   onStart: () => setSpeakingDumbledore(true),
                   onEnd: () => setSpeakingDumbledore(false),
                 });
@@ -555,6 +607,28 @@ export default function PerfilGame() {
           </div>
 
           {showIdentity && <p className="perfil-summary">{currentCard.summary}</p>}
+
+          {revealedAnswer && (() => {
+            const c = HOUSE_COMMENTATORS[currentCard.house] || HOUSE_COMMENTATORS.neutral;
+            return (
+              <button
+                type="button"
+                className={`btn-house-comment ${speakingDumbledore ? "is-speaking" : ""}`}
+                onClick={() => {
+                  if (speakingDumbledore) {
+                    magicAudio.stopVoice();
+                    setSpeakingDumbledore(false);
+                  } else {
+                    playHouseComment(currentCard, true);
+                  }
+                }}
+              >
+                <img src={c.avatar} alt={c.name} draggable={false} />
+                <Volume2 size={14} />
+                <span>{speakingDumbledore ? `${c.name} falando...` : `Comentário: ${c.name}`}</span>
+              </button>
+            );
+          })()}
 
           {/* Card Controls */}
           <div className="perfil-card-controls">

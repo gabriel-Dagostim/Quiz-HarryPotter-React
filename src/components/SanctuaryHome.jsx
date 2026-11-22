@@ -18,8 +18,8 @@ const PORTALS = [
   {
     id: "houses",
     title: "Provas das Casas",
-    tag: "64 Questões • Minerva",
-    desc: "N.O.M.s e N.I.E.M.s narrados pela Profa. Minerva McGonagall.",
+    tag: "4 Bancas • 4 Vozes",
+    desc: "Exames narrados por Minerva, Snape, Lockhart e Cedrico.",
     icon: Shield,
     cta: "Fazer Exames",
   },
@@ -49,6 +49,7 @@ export default function SanctuaryHome({
   onNavigate,
 }) {
   const [speakingWelcome, setSpeakingWelcome] = useState(false);
+  const [welcomeIdx, setWelcomeIdx] = useState(0);
   const isHouse = activeTheme !== "neutral" && HOUSES[activeTheme];
   const current = isHouse ? HOUSES[activeTheme] : NEUTRAL_THEME;
   const sortedObj = sortedHouse ? HOUSES[sortedHouse] : null;
@@ -65,7 +66,9 @@ export default function SanctuaryHome({
       setSpeakingWelcome(false);
       return;
     }
-    magicAudio.playVoice("dumbledore_welcome", {
+    const nextNum = (welcomeIdx % 3) + 1;
+    setWelcomeIdx((n) => n + 1);
+    magicAudio.playVoice(`dumbledore_welcome_${nextNum}`, {
       onStart: () => setSpeakingWelcome(true),
       onEnd: () => setSpeakingWelcome(false),
     });

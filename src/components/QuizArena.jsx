@@ -142,21 +142,23 @@ export default function QuizArena() {
         const prefix = division === "movies" ? "minerva" : "dumbledore";
         magicAudio.preloadVoice(`${prefix}_${questions[nextIdx + 1].id}`);
       } else {
-        magicAudio.preloadVoice("dumbledore_quiz_win");
-        magicAudio.preloadVoice("dumbledore_quiz_fail");
+        magicAudio.preloadVoice("dumbledore_quiz_win_1");
+        magicAudio.preloadVoice("dumbledore_quiz_fail_1");
       }
       return;
     }
     setStage("result");
     if (score < level.minScore) {
       magicAudio.prank();
-      magicAudio.playVoice("dumbledore_quiz_fail", {
+      const failClip = `dumbledore_quiz_fail_${Math.floor(Math.random() * 2) + 1}`;
+      magicAudio.playVoice(failClip, {
         onStart: () => setSpeaking(true),
         onEnd: () => setSpeaking(false),
       });
     } else {
       magicAudio.reveal();
-      magicAudio.playVoice("dumbledore_quiz_win", {
+      const winClip = `dumbledore_quiz_win_${Math.floor(Math.random() * 3) + 1}`;
+      magicAudio.playVoice(winClip, {
         onStart: () => setSpeaking(true),
         onEnd: () => setSpeaking(false),
       });

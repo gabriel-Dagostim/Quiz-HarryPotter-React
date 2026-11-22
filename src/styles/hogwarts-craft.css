@@ -1,0 +1,909 @@
+/* ==========================================================================
+   HOGWARTS ARTISANAL GRIMOIRE UI LAYER
+   Sculpted brass filigree frames, house-reactive metals, deep layered shadows,
+   generous regal spacing, illuminated forms & literary wizarding typography.
+   ========================================================================== */
+
+:root {
+  --theme-rgb: 226, 190, 104;
+}
+
+/* ---------- 1. NAVBAR & CREST BAR POLISH ---------- */
+.top-navbar {
+  background: linear-gradient(
+    180deg,
+    rgba(9, 6, 4, 0.94) 0%,
+    rgba(14, 10, 7, 0.84) 72%,
+    rgba(10, 7, 5, 0.76) 100%
+  );
+  border-bottom: 1.5px solid rgba(var(--theme-rgb), 0.34);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.62), 0 1px 0 rgba(255, 236, 185, 0.08) inset;
+}
+
+.header-inner {
+  padding: 12px 22px 11px;
+}
+
+.desktop-nav {
+  gap: 8px;
+}
+
+.desktop-nav button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  letter-spacing: 0.07em;
+}
+
+.desktop-nav button.is-active {
+  background: linear-gradient(
+    180deg,
+    rgba(var(--theme-rgb), 0.24) 0%,
+    rgba(var(--theme-rgb), 0.09) 100%
+  );
+  border-color: rgba(var(--theme-rgb), 0.6);
+  box-shadow: 0 0 18px -6px var(--theme-glow), inset 0 1px 0 rgba(255, 245, 214, 0.22);
+}
+
+.header-crest-bar {
+  gap: 10px;
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.header-crest-btn {
+  padding: 6px 14px 6px 9px;
+  gap: 8px;
+  background: linear-gradient(180deg, rgba(24, 18, 12, 0.82), rgba(10, 7, 5, 0.9));
+  border: 1px solid rgba(var(--theme-rgb), 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 240, 200, 0.08);
+}
+
+.header-crest-btn.is-selected {
+  border-color: var(--theme-ornament);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--theme-rgb), 0.28) 0%,
+    rgba(24, 16, 10, 0.92) 100%
+  );
+  box-shadow: 0 0 22px -4px var(--theme-glow), 0 6px 16px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 244, 210, 0.28);
+}
+
+/* ---------- 2. SCULPTED HOGWARTS GRIMOIRE FRAMES ---------- */
+.sanctuary-main {
+  max-width: 1120px;
+  padding: 36px 24px 96px;
+}
+
+.wiz-frame {
+  position: relative;
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(var(--theme-rgb), 0.16) 0%, transparent 56%),
+    radial-gradient(ellipse at 50% 100%, rgba(var(--theme-rgb), 0.09) 0%, transparent 50%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 240, 200, 0.015) 0px,
+      rgba(255, 240, 200, 0.015) 1px,
+      transparent 1px,
+      transparent 9px
+    ),
+    linear-gradient(168deg, var(--theme-surface-alt) 0%, var(--theme-surface) 58%, rgba(8, 6, 4, 0.92) 100%);
+  backdrop-filter: blur(18px) saturate(1.15);
+  -webkit-backdrop-filter: blur(18px) saturate(1.15);
+  border: 1.5px solid rgba(var(--theme-rgb), 0.46);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 243, 204, 0.22),
+    inset 0 0 0 6px rgba(6, 4, 3, 0.54),
+    inset 0 0 0 7px rgba(var(--theme-rgb), 0.2),
+    0 32px 76px rgba(0, 0, 0, 0.78),
+    0 12px 26px rgba(0, 0, 0, 0.62),
+    0 0 46px -14px var(--theme-glow);
+}
+
+/* Override old 2-line CSS corners with sculpted SVG filigree */
+.wf-corner {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  color: var(--theme-ornament);
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 0 7px var(--theme-glow)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
+}
+
+.wf-corner::before,
+.wf-corner::after {
+  display: none !important;
+}
+
+.wf-tl {
+  top: 7px;
+  left: 7px;
+}
+
+.wf-tr {
+  top: 7px;
+  right: 7px;
+  transform: scaleX(-1);
+}
+
+.wf-bl {
+  bottom: 7px;
+  left: 7px;
+  transform: scaleY(-1);
+}
+
+.wf-br {
+  bottom: 7px;
+  right: 7px;
+  transform: scale(-1, -1);
+}
+
+.wf-crown {
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--theme-ornament);
+  pointer-events: none;
+  z-index: 3;
+  filter: drop-shadow(0 0 8px var(--theme-glow)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.9));
+}
+
+.hallows-divider {
+  margin: 30px 0 26px;
+  gap: 12px;
+}
+
+.hd-line {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--theme-rgb), 0.52) 50%,
+    transparent 100%
+  );
+}
+
+.hd-gem {
+  width: 6px;
+  height: 6px;
+  background: var(--theme-ornament);
+  transform: rotate(45deg);
+  opacity: 0.78;
+  box-shadow: 0 0 8px var(--theme-glow);
+  flex-shrink: 0;
+}
+
+/* ---------- 3. ILLUMINATED TYPOGRAPHY & SECTION HEADERS ---------- */
+.section-head {
+  max-width: 740px;
+  margin: 0 auto 28px;
+  padding: 20px 28px 22px;
+  border-radius: 14px;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(9, 6, 4, 0.82) 0%,
+    rgba(9, 6, 4, 0.44) 68%,
+    transparent 100%
+  );
+}
+
+.wiz-eyebrow {
+  font-size: 0.76rem;
+  letter-spacing: 0.19em;
+  color: var(--theme-accent);
+}
+
+.wiz-title,
+.home-title {
+  background: linear-gradient(180deg, #fffdf7 0%, #f9e6b3 54%, #cfa144 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.92));
+}
+
+.wiz-subtitle {
+  font-size: 1.24rem;
+  line-height: 1.5;
+  color: #f3e8d4;
+  margin-top: 10px;
+}
+
+/* Literary Hogwarts book-style question heading (NO harsh all-caps wall!) */
+.question-heading {
+  font-family: var(--font-book);
+  font-size: clamp(1.44rem, 2.8vw, 1.88rem);
+  font-weight: 700;
+  line-height: 1.32;
+  letter-spacing: 0.01em;
+  color: #fffaf0;
+  margin-top: 8px;
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.85);
+}
+
+.question-lead {
+  font-size: 1.18rem;
+  line-height: 1.48;
+  color: #e4d7be;
+  margin-top: 10px;
+}
+
+/* ---------- 4. SCULPTED METALLIC BUTTONS & INTERACTIVE CONTROLS ---------- */
+.btn-gold {
+  position: relative;
+  padding: 13px 26px;
+  border-radius: 9px;
+  gap: 10px;
+  border: 1.5px solid rgba(255, 232, 162, 0.76);
+  background: linear-gradient(
+    180deg,
+    var(--theme-secondary) 0%,
+    var(--theme-primary) 88%,
+    rgba(12, 8, 4, 0.9) 100%
+  );
+  color: #fffdf6;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.72);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 224, 0.45),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.18),
+    0 12px 28px -6px rgba(0, 0, 0, 0.72),
+    0 0 26px -6px var(--theme-glow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-gold:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 252, 236, 0.58),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.14),
+    0 16px 34px -6px rgba(0, 0, 0, 0.78),
+    0 0 34px -4px var(--theme-glow);
+}
+
+.btn-gold:active:not(:disabled) {
+  transform: translateY(0px);
+}
+
+.btn-gold.btn-lg {
+  padding: 15px 34px;
+  font-size: 0.92rem;
+}
+
+.btn-outline {
+  padding: 12px 22px;
+  border-radius: 9px;
+  gap: 9px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.48);
+  background: linear-gradient(180deg, rgba(28, 21, 14, 0.86) 0%, rgba(12, 9, 6, 0.94) 100%);
+  color: var(--theme-accent);
+  font-size: 0.84rem;
+  letter-spacing: 0.07em;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 242, 204, 0.14),
+    0 8px 20px rgba(0, 0, 0, 0.52);
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--theme-ornament);
+  background: linear-gradient(
+    180deg,
+    rgba(var(--theme-rgb), 0.22) 0%,
+    rgba(18, 13, 9, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 215, 0.24),
+    0 12px 26px rgba(0, 0, 0, 0.62),
+    0 0 22px -6px var(--theme-glow);
+}
+
+.home-hero {
+  padding: 44px 36px 36px;
+}
+
+.home-cta-row {
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.action-row {
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.btn-dumbledore-greet {
+  margin-top: 18px;
+  padding: 9px 20px 9px 10px;
+  gap: 11px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.52);
+  background: linear-gradient(180deg, rgba(28, 20, 13, 0.9), rgba(12, 9, 6, 0.95));
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.62), inset 0 1px 0 rgba(255, 242, 204, 0.16);
+}
+
+.btn-dumbledore-greet:hover {
+  transform: translateY(-1px);
+  border-color: var(--theme-ornament);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.68), 0 0 24px -4px var(--theme-glow);
+}
+
+/* ---------- 5. PORTAL CARDS, HOUSE EXAM CARDS & LEVEL CARDS ---------- */
+.portal-grid {
+  gap: 18px;
+}
+
+.portal-card {
+  padding: 24px 22px 22px;
+  border-radius: 11px;
+  gap: 11px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.36);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(var(--theme-rgb), 0.14) 0%, transparent 62%),
+    linear-gradient(170deg, rgba(24, 18, 13, 0.88) 0%, rgba(10, 7, 5, 0.94) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 242, 204, 0.16),
+    inset 0 0 0 4px rgba(6, 4, 3, 0.42),
+    0 18px 38px rgba(0, 0, 0, 0.62);
+}
+
+.portal-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--theme-ornament);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 214, 0.26),
+    inset 0 0 0 4px rgba(6, 4, 3, 0.35),
+    0 24px 48px rgba(0, 0, 0, 0.72),
+    0 0 32px -6px var(--theme-glow);
+}
+
+.portal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.5);
+  background: linear-gradient(145deg, rgba(var(--theme-rgb), 0.24), rgba(14, 10, 6, 0.85));
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 244, 210, 0.25);
+}
+
+.houses-grid {
+  gap: 22px;
+}
+
+.house-exam-card {
+  padding: 28px 26px 26px;
+  gap: 18px;
+}
+
+.house-examiner-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 5px;
+  border-radius: 999px;
+  background: rgba(var(--theme-rgb), 0.12);
+  border: 1px solid rgba(var(--theme-rgb), 0.36);
+  color: var(--theme-accent);
+  font-weight: 600;
+}
+
+.house-examiner-pill img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid var(--theme-ornament);
+}
+
+.levels-grid {
+  gap: 20px;
+}
+
+.level-card {
+  padding: 26px 24px;
+  gap: 12px;
+}
+
+.division-switch {
+  gap: 16px;
+  max-width: 680px;
+}
+
+.division-pill {
+  padding: 18px 22px;
+  gap: 15px;
+  border-radius: 11px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.34);
+  background: linear-gradient(175deg, rgba(26, 19, 13, 0.88), rgba(10, 7, 5, 0.94));
+  box-shadow: inset 0 1px 0 rgba(255, 242, 204, 0.12), 0 12px 26px rgba(0, 0, 0, 0.54);
+}
+
+.division-pill.is-active {
+  border-color: var(--theme-ornament);
+  background: linear-gradient(
+    145deg,
+    rgba(var(--theme-rgb), 0.28) 0%,
+    rgba(26, 18, 12, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 216, 0.32),
+    0 14px 32px rgba(0, 0, 0, 0.62),
+    0 0 30px -6px var(--theme-glow);
+}
+
+/* ---------- 6. EXAM, QUIZ & SORTING ANSWER PLAQUES ---------- */
+.exam-play-card,
+.sorting-question-card {
+  max-width: 820px;
+  padding: 34px 36px 32px;
+}
+
+.exam-play-header {
+  margin-bottom: 18px;
+}
+
+.wiz-progress {
+  height: 7px;
+  background: rgba(0, 0, 0, 0.52);
+  border: 1px solid rgba(var(--theme-rgb), 0.25);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.75);
+  margin-bottom: 24px;
+}
+
+.wiz-progress-fill {
+  box-shadow: 0 0 14px var(--theme-glow);
+}
+
+.lifelines-row {
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.lifeline-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  gap: 8px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.42);
+  background: linear-gradient(180deg, rgba(var(--theme-rgb), 0.16), rgba(14, 10, 6, 0.88));
+  font-size: 0.82rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 244, 210, 0.16);
+  transition: all 0.18s ease;
+}
+
+.lifeline-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--theme-ornament);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55), 0 0 18px -4px var(--theme-glow);
+}
+
+.quiz-options-list {
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.sorting-options-grid {
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.wiz-option-card {
+  padding: 17px 22px;
+  gap: 16px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.32);
+  background: linear-gradient(
+    180deg,
+    rgba(28, 21, 15, 0.88) 0%,
+    rgba(13, 10, 7, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 243, 210, 0.12),
+    0 10px 22px rgba(0, 0, 0, 0.48);
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+.wiz-option-card:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--theme-ornament);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--theme-rgb), 0.24) 0%,
+    rgba(24, 17, 11, 0.95) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 246, 218, 0.28),
+    0 14px 28px rgba(0, 0, 0, 0.62),
+    0 0 24px -6px var(--theme-glow);
+}
+
+.opt-numeral {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.56);
+  background: linear-gradient(145deg, rgba(var(--theme-rgb), 0.22), rgba(14, 10, 6, 0.92));
+  color: var(--theme-accent);
+  font-size: 0.84rem;
+  box-shadow: inset 0 1px 0 rgba(255, 245, 214, 0.26), 0 4px 10px rgba(0, 0, 0, 0.45);
+}
+
+.opt-label {
+  font-size: 1rem;
+  line-height: 1.44;
+  color: #faf2e2;
+  font-weight: 500;
+}
+
+.opt-text strong {
+  font-size: 0.98rem;
+  color: #fff8eb;
+}
+
+.opt-text small {
+  font-size: 0.82rem;
+  color: #cbbda3;
+}
+
+.wiz-option-card.is-correct {
+  border-color: #52dc90;
+  background: linear-gradient(135deg, rgba(24, 128, 72, 0.45), rgba(10, 44, 26, 0.9));
+  box-shadow: 0 0 28px -6px rgba(72, 216, 134, 0.55), 0 12px 26px rgba(0, 0, 0, 0.55);
+}
+
+.wiz-option-card.is-wrong {
+  border-color: #e96b6b;
+  background: linear-gradient(135deg, rgba(154, 34, 34, 0.45), rgba(46, 10, 10, 0.9));
+  box-shadow: 0 0 26px -6px rgba(230, 88, 88, 0.5), 0 12px 26px rgba(0, 0, 0, 0.55);
+}
+
+.answer-feedback {
+  margin-top: 22px;
+  padding: 18px 22px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.46);
+  background: linear-gradient(180deg, rgba(24, 18, 12, 0.9), rgba(10, 7, 5, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255, 244, 210, 0.14), 0 12px 28px rgba(0, 0, 0, 0.56);
+}
+
+.answer-feedback p {
+  font-size: 0.94rem;
+  line-height: 1.52;
+  color: #eee2cd;
+}
+
+/* ---------- 7. NARRATOR PORTRAIT MEDALLION BAR ---------- */
+.narrator-bar {
+  padding: 13px 18px;
+  gap: 15px;
+  margin-bottom: 20px;
+  border-radius: 11px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.42);
+  background: linear-gradient(
+    90deg,
+    rgba(var(--theme-rgb), 0.14) 0%,
+    rgba(16, 12, 8, 0.88) 45%,
+    rgba(10, 8, 6, 0.94) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 210, 0.14),
+    0 10px 24px rgba(0, 0, 0, 0.5);
+}
+
+.narrator-avatar {
+  width: 52px;
+  height: 52px;
+  border: 2px solid var(--theme-ornament);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.65), 0 6px 16px rgba(0, 0, 0, 0.65);
+}
+
+.narrator-name-row strong {
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+}
+
+.narrator-info small {
+  font-size: 0.78rem;
+  color: #cbbda3;
+}
+
+.narrator-tone-slytherin {
+  border-color: rgba(114, 208, 156, 0.48);
+}
+
+.narrator-tone-ravenclaw {
+  border-color: rgba(132, 180, 246, 0.48);
+}
+
+.narrator-tone-hufflepuff {
+  border-color: rgba(242, 202, 86, 0.52);
+}
+
+.narrator-tone-gryffindor {
+  border-color: rgba(232, 178, 76, 0.52);
+}
+
+.btn-narrator {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.54);
+  background: linear-gradient(180deg, rgba(var(--theme-rgb), 0.2), rgba(14, 10, 6, 0.92));
+  color: var(--theme-accent);
+  font-family: var(--font-serif);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+  transition: all 0.18s ease;
+}
+
+.btn-narrator:hover {
+  transform: translateY(-1px);
+  border-color: var(--theme-ornament);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55), 0 0 18px -4px var(--theme-glow);
+}
+
+/* ---------- 8. PERFIL BRUXO LOBBY, FORMS, INPUTS & CLUES ---------- */
+.perfil-lobby-card {
+  max-width: 880px;
+  padding: 34px 36px 32px;
+}
+
+.perfil-collection-bar {
+  padding: 12px 16px;
+  border-radius: 9px;
+  background: rgba(8, 6, 4, 0.56);
+  border: 1px solid rgba(var(--theme-rgb), 0.22);
+  margin-bottom: 22px;
+}
+
+.perfil-mode-row {
+  gap: 18px;
+}
+
+.mode-btn {
+  padding: 18px 22px;
+  gap: 15px;
+  border-radius: 11px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.3);
+  background: linear-gradient(175deg, rgba(28, 21, 14, 0.86), rgba(11, 8, 5, 0.94));
+  box-shadow: inset 0 1px 0 rgba(255, 242, 204, 0.12), 0 10px 22px rgba(0, 0, 0, 0.48);
+}
+
+.mode-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(var(--theme-rgb), 0.65);
+}
+
+.mode-btn.is-active {
+  border-color: var(--theme-ornament);
+  background: linear-gradient(
+    140deg,
+    rgba(var(--theme-rgb), 0.3) 0%,
+    rgba(30, 21, 12, 0.92) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 246, 218, 0.34),
+    0 12px 28px rgba(0, 0, 0, 0.58),
+    0 0 28px -6px var(--theme-glow);
+}
+
+.mode-btn strong {
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.mode-btn small {
+  font-size: 0.82rem;
+  color: #cbbda3;
+  margin-top: 2px;
+  display: block;
+}
+
+.perfil-filters {
+  gap: 24px;
+}
+
+.filter-group label {
+  font-size: 0.78rem;
+  letter-spacing: 0.15em;
+  color: var(--theme-accent);
+  margin-bottom: 12px;
+}
+
+.chip-row {
+  gap: 11px 12px;
+}
+
+.filter-chip {
+  padding: 10px 18px;
+  gap: 8px;
+  border-radius: 9px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.3);
+  background: linear-gradient(180deg, rgba(26, 19, 13, 0.86), rgba(11, 8, 5, 0.94));
+  color: #e6dac3;
+  font-size: 0.86rem;
+  box-shadow: inset 0 1px 0 rgba(255, 242, 204, 0.1), 0 6px 14px rgba(0, 0, 0, 0.44);
+  transition: all 0.18s ease;
+}
+
+.filter-chip:hover {
+  transform: translateY(-1px);
+  border-color: var(--theme-ornament);
+  color: #fff8ea;
+}
+
+.filter-chip.is-active {
+  border-color: var(--theme-ornament);
+  background: linear-gradient(
+    180deg,
+    rgba(var(--theme-rgb), 0.34) 0%,
+    rgba(var(--theme-rgb), 0.15) 100%
+  );
+  color: #fff9ec;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 224, 0.34),
+    0 8px 20px rgba(0, 0, 0, 0.55),
+    0 0 22px -6px var(--theme-glow);
+}
+
+.perfil-lobby-footer {
+  margin-top: 30px;
+  padding-top: 22px;
+  gap: 16px;
+}
+
+.perfil-board-grid {
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+}
+
+.perfil-card-stage {
+  padding: 24px;
+  gap: 16px;
+}
+
+.perfil-clues-panel {
+  padding: 28px 30px;
+  gap: 18px;
+}
+
+.clue-number-bar {
+  gap: 8px;
+}
+
+.clue-num-btn {
+  height: 42px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.32);
+  background: linear-gradient(180deg, rgba(24, 18, 12, 0.88), rgba(10, 7, 5, 0.95));
+  font-size: 0.88rem;
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.44), inset 0 1px 0 rgba(255, 242, 204, 0.1);
+}
+
+.clue-num-btn.is-open {
+  border-color: var(--theme-ornament);
+  background: linear-gradient(180deg, rgba(var(--theme-rgb), 0.42), rgba(var(--theme-rgb), 0.18));
+  color: #fffdf6;
+  box-shadow: 0 0 16px -4px var(--theme-glow), inset 0 1px 0 rgba(255, 248, 224, 0.35);
+}
+
+.clues-list {
+  gap: 11px;
+}
+
+.clue-item {
+  padding: 13px 16px;
+  gap: 13px;
+  border-radius: 9px;
+  background: linear-gradient(180deg, rgba(22, 16, 11, 0.84), rgba(10, 8, 5, 0.92));
+  border: 1px solid rgba(var(--theme-rgb), 0.24);
+  font-size: 0.96rem;
+  line-height: 1.48;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.38);
+}
+
+.guess-form {
+  gap: 12px;
+}
+
+.wiz-input {
+  padding: 14px 18px;
+  border-radius: 9px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.44);
+  background: linear-gradient(180deg, rgba(7, 5, 4, 0.92), rgba(16, 12, 8, 0.92));
+  color: #fff8ea;
+  font-size: 0.98rem;
+  box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.72), 0 1px 0 rgba(255, 242, 204, 0.08);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.wiz-input::placeholder {
+  color: #9f9078;
+}
+
+.wiz-input:focus {
+  border-color: var(--theme-ornament);
+  box-shadow:
+    inset 0 3px 10px rgba(0, 0, 0, 0.72),
+    0 0 0 3px rgba(var(--theme-rgb), 0.22),
+    0 0 22px -4px var(--theme-glow);
+}
+
+.btn-house-comment {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(var(--theme-rgb), 0.48);
+  background: linear-gradient(180deg, rgba(var(--theme-rgb), 0.18), rgba(12, 9, 6, 0.92));
+  color: var(--theme-accent);
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.48);
+  transition: all 0.2s ease;
+}
+
+.btn-house-comment img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center top;
+  border: 1px solid var(--theme-ornament);
+}
+
+.btn-house-comment:hover,
+.btn-house-comment.is-speaking {
+  border-color: var(--theme-ornament);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.56), 0 0 22px -4px var(--theme-glow);
+}
+
+/* ---------- 9. RESPONSIVE BREATHING ROOM ---------- */
+@media (max-width: 900px) {
+  .perfil-board-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .sanctuary-main {
+    padding: 20px 14px 88px;
+  }
+  .exam-play-card,
+  .sorting-question-card,
+  .perfil-lobby-card,
+  .home-hero {
+    padding: 24px 18px 22px;
+  }
+  .perfil-clues-panel {
+    padding: 20px 16px;
+  }
+  .wf-corner {
+    width: 24px;
+    height: 24px;
+  }
+  .wiz-option-card {
+    padding: 14px 15px;
+    gap: 12px;
+  }
+  .filter-chip {
+    padding: 8px 13px;
+    font-size: 0.8rem;
+  }
+}

@@ -20,6 +20,13 @@ import { magicAudio } from "../utils/sound";
 
 const ROMAN = ["I", "II", "III", "IV"];
 
+const EXAMINER_AVATAR = {
+  minerva: "/images/perfil/minerva-mcgonagall.webp",
+  snape: "/images/perfil/severo-snape.webp",
+  lockhart: "/images/perfil/gilderoy-lockhart.webp",
+  cedric: "/images/perfil/cedrico-diggory.webp",
+};
+
 export default function HousesHall({
   sortedHouse,
   unlockedHouses,
@@ -41,7 +48,7 @@ export default function HousesHall({
     return () => magicAudio.stopVoice();
   }, []);
 
-  const playMinerva = (clipId, fallbackText) => {
+  const playVoiceClip = (clipId, fallbackText) => {
     magicAudio.playVoice(clipId, {
       onStart: () => setSpeaking(true),
       onEnd: () => setSpeaking(false),
@@ -49,9 +56,12 @@ export default function HousesHall({
     });
   };
 
+  const pickVariant = (prefix, count = 2) => `${prefix}_${Math.floor(Math.random() * count) + 1}`;
+
   const startExam = (houseId) => {
     const exam = HOUSE_QUIZZES[houseId];
     if (!exam) return;
+    const voiceKey = exam.voice || "minerva";
     // Draw 8 fresh randomized questions from the 16-question house bank
     const prepared = prepareShuffledQuestions(exam.questions, lastFirstByHouse.current[houseId]).slice(
       0,
@@ -68,10 +78,10 @@ export default function HousesHall({
     setScore(0);
     setFinished(false);
     if (prepared[0]) {
-      playMinerva(`minerva_${prepared[0].id}`, prepared[0].question);
+      playVoiceClip(`${voiceKey}_${prepared[0].id}`, prepared[0].question);
     }
     if (prepared[1]) {
-      magicAudio.preloadVoice(`minerva_${prepared[1].id}`);
+      magicAudio.preloadVoice(`${voiceKey}_${prepared[1].id}`);
     }
   };
 
@@ -90,19 +100,21 @@ export default function HousesHall({
   };
 
   const handleNext = () => {
+    const exam = HOUSE_QUIZZES[activeExamId];
+    const voiceKey = exam?.voice || "minerva";
     if (currentIdx + 1 < questions.length) {
       const nextIdx = currentIdx + 1;
       setCurrentIdx(nextIdx);
       setSelectedOpt(null);
       const nextQ = questions[nextIdx];
       if (nextQ) {
-        playMinerva(`minerva_${nextQ.id}`, nextQ.question);
+        playVoiceClip(`${voiceKey}_${nextQ.id}`, nextQ.question);
       }
       if (questions[nextIdx + 1]) {
-        magicAudio.preloadVoice(`minerva_${questions[nextIdx + 1].id}`);
+        magicAudio.preloadVoice(`${voiceKey}_${questions[nextIdx + 1].id}`);
       } else {
-        magicAudio.preloadVoice("minerva_exam_pass");
-        magicAudio.preloadVoice("minerva_exam_fail");
+        magicAudio.preloadVoice(`${voiceKey}_exam_pass_1`);
+        magicAudio.preloadVoice(`${voiceKey}_exam_fail_1`);
       }
       return;
     }
@@ -110,10 +122,16 @@ export default function HousesHall({
     if (score >= HOUSE_UNLOCK_MIN_SCORE) {
       magicAudio.reveal();
       onUnlockHouse(activeExamId);
-      playMinerva("minerva_exam_pass", "Muito bem! A Sala Comunal agora está aberta para você.");
+      playVoiceClip(
+        pickVariant(`${voiceKey}_exam_pass`, 2),
+        "Muito bem! A Sala Comunal agora está aberta para você."
+      );
     } else {
       magicAudio.prank();
-      playMinerva("minerva_exam_fail", "Receio que esta nota ainda não seja suficiente.");
+      playVoiceClip(
+        pickVariant(`${voiceKey}_exam_fail`, 2),
+        "Receio que esta nota ainda não seja suficiente."
+      );
     }
   };
 
@@ -198,10 +216,10 @@ export default function HousesHall({
           </div>
 
           <NarratorBar
-            character="minerva"
+            character={exam.voice || "minerva"}
             speaking={speaking}
             caption={exam.subtitle}
-            onReplay={() => playMinerva(`minerva_${q.id}`, q.question)}
+            onReplay={() => playVoiceClip(`${exam.voice || "minerva"}_${q.id}`, q.question)}
             onStop={() => {
               magicAudio.stopVoice();
               setSpeaking(false);
@@ -273,7 +291,7 @@ export default function HousesHall({
         </span>
         <h2 className="wiz-title">Provas das Casas</h2>
         <p className="wiz-subtitle">
-          Conquiste nota Aceitável ({HOUSE_UNLOCK_MIN_SCORE}/{HOUSE_QUIZ_TOTAL}) nos exames narrados pela Profa. Minerva McGonagall.
+          Conquiste nota Aceitável ({HOUSE_UNLOCK_MIN_SCORE}/{HOUSE_QUIZ_TOTAL}) diante da banca de cada Casa: Minerva, Snape, Lockhart e Cedrico.
         </p>
         <button
           type="button"
@@ -283,9 +301,9 @@ export default function HousesHall({
               magicAudio.stopVoice();
               setSpeaking(false);
             } else {
-              playMinerva(
+              playVoiceClip(
                 "minerva_houses_intro",
-                "Atenção, alunos! Estes são os exames oficiais de Hogwarts."
+                "Prestem atenção, por favor! Cada Casa possui a sua própria banca examinadora."
               );
             }
           }}
@@ -335,7 +353,14 @@ export default function HousesHall({
 
               <div className="house-card-meta">
                 <span>Banco: {exam.questions.length} questões</span>
-                <span>Banca: {exam.examiner}</span>
+                <span className="house-examiner-pill">
+                  <img
+                    src={EXAMINER_AVATAR[exam.voice || "minerva"]}
+                    alt={exam.examiner}
+                    draggable={false}
+                  />
+                  {exam.examiner}
+                </span>
               </div>
 
               <div className="house-card-actions">
